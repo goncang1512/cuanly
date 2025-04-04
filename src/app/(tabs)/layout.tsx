@@ -1,5 +1,6 @@
 import BottomNav from "@/components/BottomNav";
 import { auth } from "@/lib/auth";
+import GlobalContextProvider from "@/lib/context/GlobalContext";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -14,10 +15,12 @@ async function layout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex justify-center">
-      <div className="min-h-screen md:w-3xl w-full ">{children}</div>
-      <BottomNav />
-    </div>
+    <GlobalContextProvider>
+      <div className="flex justify-center">
+        <div className="min-h-screen md:w-3xl w-full ">{children}</div>
+        <BottomNav />
+      </div>
+    </GlobalContextProvider>
   );
 }
 

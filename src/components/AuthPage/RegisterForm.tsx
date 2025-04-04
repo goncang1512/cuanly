@@ -1,6 +1,4 @@
 "use client";
-import * as React from "react";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,43 +10,33 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import InputPassword from "../fragments/InputPassword";
 import { LoaderCircle } from "lucide-react";
+import { registerUser } from "@/actions/user.action";
+import { useActionState, useEffect, useState } from "react";
 
 function RegisterForm() {
   const router = useRouter();
-  const [loading, setLoading] = React.useState(false);
-  const [message, setMessage] = React.useState("");
-  const handleSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const [message, setMessage] = useState("");
 
-    const formData = new FormData(event.currentTarget);
-    setLoading(true);
+  const [state, formAction, isPending] = useActionState(registerUser, null);
+
+  useEffect(() => {
     setMessage("");
-    await authClient.signUp.email(
-      {
-        email: formData.get("email-up") as string,
-        password: formData.get("password-up") as string,
-        name: formData.get("name") as string,
-        callbackURL: "/auth?form=sign-in",
-      },
-      {
-        onError: (ctx) => {
-          setLoading(false);
-          setMessage(ctx.error?.message);
-        },
-        onSuccess: () => {
-          setLoading(false);
-          router.push("/auth?form=sign-in");
-        },
-      }
-    );
-  };
+    if (state?.statusCode === 422 && !isPending) {
+      setMessage(state.message);
+    } else {
+      setMessage("");
+    }
+
+    if (state?.status) {
+      router.push("/auth?form=sign-in");
+    }
+  }, [isPending, state]);
 
   return (
-    <form onSubmit={handleSignUp}>
+    <form action={formAction}>
       <Card className={`w-full gap-3`}>
         <CardHeader>
           <CardTitle className="text-xl">Sign Up</CardTitle>
@@ -75,8 +63,8 @@ function RegisterForm() {
           </div>
         </CardContent>
         <CardFooter className="flex items-end gap-3 flex-col ">
-          <Button disabled={loading} type="submit">
-            {loading ? <LoaderCircle className="animate-spin" /> : "Sign up"}
+          <Button disabled={isPending} type="submit">
+            {isPending ? <LoaderCircle className="animate-spin" /> : "Sign up"}
           </Button>
           <p className="w-full text-center">
             Have an account?{" "}

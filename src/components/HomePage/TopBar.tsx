@@ -20,7 +20,7 @@ export default function TopBar() {
         const fontReduction = Math.floor(scrollY / 7);
         const maxScroll = 50;
 
-        const newIconSize = Math.max(20, 28 - reduction);
+        const newIconSize = Math.max(23, 28 - reduction);
         const newFontSize = Math.max(16, 20 - fontReduction);
         const calculatedOpacity = Math.min(1, scrollY / maxScroll);
 
@@ -54,7 +54,7 @@ export default function TopBar() {
       <div className="md:w-3xl w-full flex items-center justify-between px-2">
         <div className="flex items-center gap-2">
           <Wallet
-            size={!barScroll ? sizeIcon.icon : 20}
+            size={!barScroll ? sizeIcon.icon : 23}
             className="duration-500"
           />
           <h1
@@ -67,11 +67,11 @@ export default function TopBar() {
 
         <div className="flex gap-2">
           <CircleUserRound
-            size={!barScroll ? sizeIcon.icon : 20}
+            size={!barScroll ? sizeIcon.icon : 23}
             className="duration-500"
           />
           <Bell
-            size={!barScroll ? sizeIcon.icon : 20}
+            size={!barScroll ? sizeIcon.icon : 23}
             className="duration-500"
           />
         </div>

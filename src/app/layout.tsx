@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,7 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-inter antialiased bg-neutral-50`}>{children}</body>
+      <body className={`font-inter antialiased bg-neutral-50`}>
+        <NextTopLoader color="#3cbf8f" height={2} showSpinner={false} />
+        {children}
+      </body>
     </html>
   );
 }
