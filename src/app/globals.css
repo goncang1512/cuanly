@@ -45,6 +45,14 @@
 
   /* FONT FAMILY */
   --font-inter: "Inter", sans-serif;
+
+  /* COLOR THEME */
+  --color-emerald: #3cbf8f;
+  --color-dark-emerald: #268568;
+  --color-light-emerald: #b2e7d8;
+  --color-dark-gray: #4d4d59;
+  --color-gold: #f3de7c;
+  --color-danger: #c75c4c;
 }
 
 :root {

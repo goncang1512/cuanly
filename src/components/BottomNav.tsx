@@ -1,11 +1,16 @@
-import Link from "next/link";
+"use client";
 import React from "react";
+import LinkNav from "./Navigation/LinkNav";
+import DrawerAdd from "./Navigation/DrawerAdd";
+import { usePathname } from "next/navigation";
 
 function BottomNav() {
+  const pathname = usePathname();
   return (
     <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
-      <div className="grid h-full max-w-lg grid-cols-5 mx-auto font-medium">
+      <div className="grid h-full max-w-xl grid-cols-5 mx-auto font-medium">
         <LinkNav
+          inHref={pathname === "/"}
           href="/"
           icon={
             <svg
@@ -21,6 +26,7 @@ function BottomNav() {
           Home
         </LinkNav>
         <LinkNav
+          inHref={pathname === "/wallet"}
           icon={
             <svg
               aria-hidden="true"
@@ -37,30 +43,10 @@ function BottomNav() {
           Wallet
         </LinkNav>
         <CircleAdd>
-          <button
-            type="button"
-            className="bg-blue-600 absolute -top-3 left-1/2 transform -translate-x-1/2 size-12 flex items-center justify-center text-white rounded-full"
-          >
-            <svg
-              className="size-8 text-white"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="25"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M5 12h14m-7 7V5"
-              />
-            </svg>
-          </button>
+          <DrawerAdd />
         </CircleAdd>
         <LinkNav
+          inHref={pathname === "/grafik"}
           icon={
             <svg
               aria-hidden="true"
@@ -79,6 +65,7 @@ function BottomNav() {
           Grafik
         </LinkNav>
         <LinkNav
+          inHref={pathname === "/profile"}
           icon={
             <svg
               aria-hidden="true"
@@ -106,37 +93,10 @@ const CircleAdd = ({ children }: { children: React.ReactNode }) => {
           {children}
         </div>
         <div className="bg-white border p-1 rounded-full absolute left-1/2 transform -translate-x-1/2">
-          <button
-            type="button"
-            className="bg-white size-12 flex items-center justify-center  rounded-full"
-          />
+          <button className="bg-white size-12 flex items-center justify-center  rounded-full" />
         </div>
       </div>
     </div>
-  );
-};
-
-const LinkNav = ({
-  children,
-  href,
-  icon,
-}: {
-  children: React.ReactNode;
-  href: string;
-  icon: React.ReactNode;
-}) => {
-  return (
-    <Link
-      href={href}
-      className="inline-flex flex-col items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800 group"
-    >
-      <span className="w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">
-        {icon}
-      </span>
-      <span className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">
-        {children}
-      </span>
-    </Link>
   );
 };
 
