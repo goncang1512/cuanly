@@ -1,10 +1,12 @@
-import { Shirt, Wallet } from "lucide-react";
+import { Shirt, Wallet, ChartLine, PiggyBank } from "lucide-react";
 import React from "react";
 
 // Mapping ikon
 const icons = {
   wallet: Wallet,
   fashion: Shirt,
+  invest: ChartLine,
+  savings: PiggyBank,
 };
 
 type IconKey = keyof typeof icons;

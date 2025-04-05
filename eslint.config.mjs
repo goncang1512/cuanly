@@ -12,12 +12,6 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
-    files: ["**/*.action.ts"],
-    rules: {
-      "@typescript-eslint/no-explicit-any": "off",
-    },
-  },
-  {
     rules: {
       "react-hooks/exhaustive-deps": "off",
     },

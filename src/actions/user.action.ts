@@ -2,13 +2,13 @@
 import { auth } from "@/lib/auth";
 import { generateWalletId } from "@/lib/generateId";
 import prisma from "@/lib/prisma";
-import { ApiResponse } from "@/lib/types";
+import { ApiResponse, UserType } from "@/lib/types";
 import { APIError } from "better-call";
 
 export const registerUser = async (
-  prevState: any,
+  prevState: unknown,
   formData: FormData
-): Promise<ApiResponse<any>> => {
+): Promise<ApiResponse<UserType | APIError | null>> => {
   try {
     const data = await auth.api.signUpEmail({
       body: {
@@ -24,7 +24,6 @@ export const registerUser = async (
         name: "Dompet Utama",
         userId: data?.user?.id,
         kategori: "wallet",
-        balance: 0,
       },
     });
 
@@ -32,7 +31,7 @@ export const registerUser = async (
       status: true,
       statusCode: 201,
       message: "Success create user",
-      results: data,
+      results: data?.user,
     };
   } catch (error) {
     if (error instanceof APIError) {

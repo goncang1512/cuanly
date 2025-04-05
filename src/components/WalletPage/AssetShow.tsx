@@ -2,33 +2,29 @@
 import { useGlobalState } from "@/lib/context/GlobalContext";
 import { WalletType } from "@/lib/types";
 import { Eye, EyeOff } from "lucide-react";
-import React, { useEffect } from "react";
+import React from "react";
 
-export default function AssetShow({ wallet }: { wallet: WalletType | null }) {
+export default function AssetShow({
+  query,
+  wallet: allWallet,
+}: {
+  query: string;
+  wallet: WalletType[] | [];
+}) {
   const { setSeeSaldo, seeSaldo } = useGlobalState();
 
-  useEffect(() => {
-    const stored = localStorage.getItem("seeSaldo");
-    if (stored !== null) {
-      setSeeSaldo(JSON.parse(stored));
-    } else {
-      localStorage.setItem("seeSaldo", JSON.stringify(false));
-      setSeeSaldo(false);
-    }
-  }, []);
+  const totalBalance = Array.isArray(allWallet)
+    ? allWallet.reduce((acc, wallet) => acc + wallet.balance, 0)
+    : 0;
 
-  useEffect(() => {
-    localStorage.setItem("seeSaldo", JSON.stringify(seeSaldo));
-  }, [seeSaldo]);
+  const assetName = query === "all" ? "All" : query === "group" ? "Our" : "My";
 
   return (
     <div className="bg-white shadow-sm rounded-sm p-3 flex justify-between px-5">
-      <p>My assets</p>
+      <p>{assetName} assets</p>
       <div className="flex items-center gap-2">
         <p className="font-medium">
-          {seeSaldo
-            ? "Rp ----"
-            : `Rp${wallet?.balance.toLocaleString("id-ID")}`}
+          {seeSaldo ? "Rp ----" : `Rp${totalBalance.toLocaleString("id-ID")}`}
         </p>
 
         <button onClick={() => setSeeSaldo((prev) => !prev)}>

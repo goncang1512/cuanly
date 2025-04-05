@@ -1,6 +1,6 @@
 "use client";
 import { Check, Eye, EyeOff, Files } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import LastTransaction from "./LastTransaction";
 import { WalletType } from "@/lib/types";
 import { iconFn } from "@/lib/dynamicIcon";
@@ -9,20 +9,6 @@ import { useGlobalState } from "@/lib/context/GlobalContext";
 export default function CardWallet({ wallet }: { wallet: WalletType | null }) {
   const { setSeeSaldo, seeSaldo } = useGlobalState();
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("seeSaldo");
-    if (stored !== null) {
-      setSeeSaldo(JSON.parse(stored));
-    } else {
-      localStorage.setItem("seeSaldo", JSON.stringify(false));
-      setSeeSaldo(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("seeSaldo", JSON.stringify(seeSaldo));
-  }, [seeSaldo]);
 
   const handleCopy = (wallet_id: string) => {
     if (!wallet_id) return;

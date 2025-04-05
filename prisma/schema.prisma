@@ -82,7 +82,7 @@ enum TypeWallet {
 model Wallet {
   id            String      @id
   name          String
-  balance       Float
+  balance       Float       @default(0)
   type          TypeWallet  @default(self)
   userId        String
   kategori      String

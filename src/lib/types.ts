@@ -17,3 +17,13 @@ export type WalletType = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type UserType = {
+  id: string;
+  email: string;
+  name: string;
+  image: string | null | undefined;
+  emailVerified: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
