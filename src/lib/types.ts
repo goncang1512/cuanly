@@ -27,3 +27,17 @@ export type UserType = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type TransactionType = {
+  id: string;
+  category: string;
+  description?: string | null;
+  balance: number;
+  type: $Enums.TransType;
+  userId: string;
+  walletId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  user?: UserType;
+  wallet?: WalletType;
+};

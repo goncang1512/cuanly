@@ -7,7 +7,7 @@ import React from "react";
 
 export function TopDetail({ wallet }: { wallet: WalletType | null }) {
   const { seeSaldo, setSeeSaldo } = useGlobalState();
-  const Icon = iconFn(String(wallet?.kategori));
+  const { Icon } = iconFn(String(wallet?.kategori));
 
   return (
     <div className="flex flex-col items-center justify-center py-2">

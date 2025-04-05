@@ -7,7 +7,7 @@ import { useGlobalState } from "@/lib/context/GlobalContext";
 import Link from "next/link";
 
 export default function CardWallet({ wallet }: { wallet: WalletType | null }) {
-  const Icon = iconFn(String(wallet?.kategori));
+  const { Icon } = iconFn(String(wallet?.kategori));
   const { seeSaldo } = useGlobalState();
 
   return (

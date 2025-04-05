@@ -5,6 +5,7 @@ import { generateWalletId } from "@/lib/generateId";
 import prisma from "@/lib/prisma";
 import { ApiResponse, WalletType } from "@/lib/types";
 import { $Enums } from "@prisma/client";
+import { endOfDay, startOfDay } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
@@ -15,6 +16,20 @@ export const getWallet = async () => {
   const data = await prisma.wallet.findFirst({
     where: {
       userId: String(session?.user?.id),
+      name: "Dompet Utama",
+    },
+  });
+
+  const todayStart = startOfDay(new Date());
+  const todayEnd = endOfDay(new Date());
+
+  const transaction = await prisma.transaction.findMany({
+    where: {
+      userId: session?.user?.id,
+      createdAt: {
+        gte: todayStart,
+        lte: todayEnd,
+      },
     },
   });
 
@@ -22,7 +37,10 @@ export const getWallet = async () => {
     status: true,
     statusCode: 200,
     message: "Success get wallet",
-    results: data,
+    results: {
+      wallet: data,
+      transaction,
+    },
   };
 };
 
@@ -115,6 +133,9 @@ export const detailWallet = async (wallet_id: string) => {
     const data = await prisma.wallet.findFirst({
       where: {
         id: wallet_id,
+      },
+      include: {
+        transaction: true,
       },
     });
 

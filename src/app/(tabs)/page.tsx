@@ -9,7 +9,10 @@ export default async function Home() {
     <div className="p-2">
       <TopBar />
       <div className="pt-14 h-[300vh]">
-        <CardWallet wallet={data?.results} />
+        <CardWallet
+          wallet={data?.results?.wallet}
+          transaction={data?.results?.transaction}
+        />
       </div>
     </div>
   );

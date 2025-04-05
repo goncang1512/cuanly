@@ -20,19 +20,16 @@ export function useFormActionState<FormValueType>(
   );
 
   useEffect(() => {
+    // reset hanya saat status success dan form submit sukses (bukan waktu user ngetik)
+    if (!isPending && state?.status) {
+      setFormValue(defaultValue);
+    }
+
+    // optionally handle error
     if (!isPending && !state?.status && state?.statusCode === 422) {
       setMessage(String(state?.message));
     }
-
-    if (!isPending && state?.status) {
-      setFormValue((prev) => {
-        if (JSON.stringify(prev) !== JSON.stringify(defaultValue)) {
-          return defaultValue;
-        }
-        return prev;
-      });
-    }
-  }, [state, isPending, defaultValue]);
+  }, [state, isPending]);
 
   const updateForm = useCallback((updatedFields: Partial<FormValueType>) => {
     setFormValue((prev) => ({ ...prev, ...updatedFields }));

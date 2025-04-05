@@ -1,16 +1,12 @@
 import { detailWallet } from "@/actions/wallet.action";
 import { Input } from "@/components/ui/input";
 import BarTop from "@/components/WalletPage/params/BarTop";
+import FormAddMoney from "@/components/WalletPage/params/FormAddMoney";
 import { TopDetail } from "@/components/WalletPage/params/TopDetail";
-import {
-  ArrowRight,
-  ArrowUp,
-  ListFilter,
-  Plus,
-  Search,
-  ShirtIcon,
-} from "lucide-react";
+import { TransactionType } from "@/lib/types";
+import { ArrowRight, ArrowUp, ListFilter, Search } from "lucide-react";
 import React from "react";
+import TransactionCard from "@/components/TransactionCard";
 
 export default async function WalletDetail({
   params,
@@ -19,7 +15,6 @@ export default async function WalletDetail({
 }) {
   const { wallet_id } = await params;
   const wallet = await detailWallet(wallet_id);
-  const banyak = 10;
 
   return (
     <div>
@@ -29,9 +24,8 @@ export default async function WalletDetail({
 
         <div className="flex justify-center gap-3">
           <div className="flex flex-col items-center w-max">
-            <button className="bg-emerald text-white size-10 rounded-full flex items-center justify-center">
-              <Plus size={30} />
-            </button>
+            <FormAddMoney wallet={wallet?.results} />
+
             <h1 className="text-sm font-medium">Add money</h1>
           </div>
           <div className="flex flex-col items-center w-max">
@@ -68,23 +62,18 @@ export default async function WalletDetail({
             </button>
           </form>
           <div>
-            {Array.from({ length: banyak }).map((_, index) => (
-              <div
-                key={index + 1}
-                className={`${
-                  index + 1 === banyak ? "" : "border-b"
-                } px-3 py-2 flex items-center justify-between border-neutral-300`}
-              >
-                <div className="flex items-center gap-3">
-                  <ShirtIcon className="bg-rose-300 p-1 rounded-md" size={30} />
-                  <div>
-                    <p className="text-sm">Fashion</p>
-                    <span className="font-semibold">Rp{index + 1}00.000</span>
-                  </div>
-                </div>
-                <p>15 Maret 2024</p>
-              </div>
-            ))}
+            {wallet?.results?.transaction.map(
+              (data: TransactionType, index: number) => {
+                return (
+                  <TransactionCard
+                    data={data}
+                    index={index}
+                    key={data?.id}
+                    banyak={wallet?.results?.transaction?.length}
+                  />
+                );
+              }
+            )}
           </div>
         </div>
       </div>

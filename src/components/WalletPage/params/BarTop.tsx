@@ -1,4 +1,5 @@
 "use client";
+import { DialogTitle } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { ArrowLeft, Ellipsis } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -20,6 +21,7 @@ export default function BarTop() {
             <Ellipsis />
           </DrawerTrigger>
           <DrawerContent className="h-[50vh]">
+            <DialogTitle hidden>Wallet context</DialogTitle>
             <div className="mx-auto w-full max-w-sm mt-2">
               <button className="px-2 py-3 hover:bg-neutral-200 w-full text-start">
                 Delete wallet

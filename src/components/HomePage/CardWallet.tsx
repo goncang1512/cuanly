@@ -2,11 +2,17 @@
 import { Check, Eye, EyeOff, Files } from "lucide-react";
 import React, { useState } from "react";
 import LastTransaction from "./LastTransaction";
-import { WalletType } from "@/lib/types";
+import { TransactionType, WalletType } from "@/lib/types";
 import { iconFn } from "@/lib/dynamicIcon";
 import { useGlobalState } from "@/lib/context/GlobalContext";
 
-export default function CardWallet({ wallet }: { wallet: WalletType | null }) {
+export default function CardWallet({
+  wallet,
+  transaction,
+}: {
+  wallet: WalletType | null;
+  transaction: TransactionType[];
+}) {
   const { setSeeSaldo, seeSaldo } = useGlobalState();
   const [copied, setCopied] = useState(false);
 
@@ -18,7 +24,7 @@ export default function CardWallet({ wallet }: { wallet: WalletType | null }) {
     });
   };
 
-  const Icon = iconFn(String(wallet?.kategori));
+  const { Icon } = iconFn(String(wallet?.kategori));
 
   return (
     <div className="bg-emerald-100 rounded-md p-3 flex gap-3 flex-col">
@@ -53,7 +59,7 @@ export default function CardWallet({ wallet }: { wallet: WalletType | null }) {
         </div>
       </div>
 
-      <LastTransaction />
+      <LastTransaction transaction={transaction} />
     </div>
   );
 }
