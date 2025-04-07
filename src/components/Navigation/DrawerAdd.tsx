@@ -16,7 +16,7 @@ import { X } from "lucide-react";
 import FormAddTrans from "./FormAddTrans";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { iconFn, icons } from "@/lib/dynamicIcon";
-import NavContextProvider, { NavContext } from "@/lib/context/NavContext";
+import { BottomContextProvider, NavContext } from "@/lib/context/NavContext";
 import TransMoney from "./TransMoney";
 import { authClient } from "@/lib/auth-client";
 import { getMyWalletTrans } from "@/actions/wallet.action";
@@ -24,27 +24,29 @@ import { WalletType } from "@/lib/types";
 
 // DRAWER ONE 11111111
 function DrawerAdd() {
-  const { seeDrawerOne, setSeeDrawerOne } = useContext(NavContext);
+  const { seeDrawerOne, setSeeDrawerOne, seeDrawerTwo, setSeeDrawerTwo } =
+    useContext(NavContext);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setSeeDrawerOne(false);
+        setSeeDrawerTwo(false);
       }
     };
 
-    if (seeDrawerOne) {
+    if (seeDrawerOne || seeDrawerTwo) {
       window.addEventListener("keydown", handleKeyDown);
     }
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [seeDrawerOne]);
+  }, [seeDrawerOne, seeDrawerTwo]);
 
-  const session = authClient.useSession();
   const [state, formAcion, isPending] = useActionState(getMyWalletTrans, null);
 
+  const session = authClient.useSession();
   useEffect(() => {
     if (!session?.data?.user?.id || !seeDrawerOne) return;
 
@@ -57,11 +59,14 @@ function DrawerAdd() {
   }, [session?.data?.user?.id, seeDrawerOne]);
 
   return (
-    <NavContextProvider
+    <BottomContextProvider
       myWallet={state?.results as WalletType[]}
       loadingGet={isPending}
     >
-      <Drawer open={seeDrawerOne} onOpenChange={setSeeDrawerOne}>
+      <Drawer
+        open={seeDrawerOne}
+        onOpenChange={(open) => setSeeDrawerOne(open)}
+      >
         <DrawerTrigger asChild>
           <button className="bg-emerald hover:bg-dark-emerald absolute -top-3 left-1/2 transform -translate-x-1/2 size-12 flex items-center justify-center text-white rounded-full">
             <svg
@@ -84,6 +89,7 @@ function DrawerAdd() {
           </button>
         </DrawerTrigger>
         <DrawerContent
+          aria-describedby="drawer-one"
           buttonClose={false}
           className="data-[vaul-drawer-direction=bottom]:max-h-[100vh] data-[vaul-drawer-direction=bottom]:rounded-none data-[vaul-drawer-direction=bottom]:border-0"
         >
@@ -101,7 +107,7 @@ function DrawerAdd() {
           </div>
         </DrawerContent>
       </Drawer>
-    </NavContextProvider>
+    </BottomContextProvider>
   );
 }
 
@@ -110,7 +116,7 @@ export const TabsTransactionDraw = () => {
   return (
     <Tabs defaultValue="income">
       <div className="bg-emerald w-full flex py-4 justify-center">
-        <TabsList className="w-full max-w-md mx-auto bg-transparent">
+        <TabsList className="w-full max-w-md mx-auto bg-transparent md:px-0 px-3">
           <TabsTrigger
             value="income"
             className="data-[state=active]:text-emerald-700"

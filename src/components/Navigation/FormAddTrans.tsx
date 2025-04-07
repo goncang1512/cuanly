@@ -21,7 +21,7 @@ import { iconFn } from "@/lib/dynamicIcon";
 import { WalletType } from "@/lib/types";
 import { Button } from "../ui/button";
 import { usePathname } from "next/navigation";
-import { NavContext } from "@/lib/context/NavContext";
+import { BottomContext, NavContext } from "@/lib/context/NavContext";
 import { toast } from "sonner";
 
 export default function FormAddTrans({
@@ -71,7 +71,10 @@ export default function FormAddTrans({
       });
 
       return;
-    } else if (Number(formValue.rawAmount) > Number(pickWallet?.balance)) {
+    } else if (
+      Number(formValue.rawAmount) > Number(pickWallet?.balance) &&
+      typeTrans !== "add"
+    ) {
       toast("Balance is not sufficient for transaction", {
         description: "Top up your balance again",
       });
@@ -105,8 +108,9 @@ export default function FormAddTrans({
         {children}
       </DrawerTrigger>
       <DrawerContent
+        aria-describedby="drawer-two"
         classLay="bg-transparent"
-        className="border-t h-[60vh] data-[vaul-drawer-direction=bottom]:rounded-none"
+        className="border-t h-[30vh] md:h-[60vh] data-[vaul-drawer-direction=bottom]:rounded-none"
       >
         <DrawerTitle hidden>Add transaction</DrawerTitle>
         <form
@@ -162,53 +166,55 @@ export const PickWallet = ({
   setPickWallet: Dispatch<SetStateAction<WalletType | undefined>>;
 }) => {
   const [seeDrawer, setSeeDrawer] = useState(false);
-  const { myWallet, loadingGet } = useContext(NavContext);
+  const { myWallet, loadingGet } = useContext(BottomContext);
 
   const { Icon, iconData } = iconFn(String(pickWallet?.kategori));
 
   return (
-    <Drawer onOpenChange={setSeeDrawer} open={seeDrawer}>
+    <Drawer open={seeDrawer} onOpenChange={(open) => setSeeDrawer(open)}>
       <DrawerTrigger
         style={{ backgroundColor: iconData?.color ?? "" }}
         className={`${pickWallet ? "" : "bg-neutral-300"}  p-1 rounded-sm`}
       >
         {pickWallet ? <Icon size={25} /> : <IdCard size={25} />}
       </DrawerTrigger>
-      <DrawerContent buttonClose={false}>
-        <DrawerTitle hidden>Card wallet</DrawerTitle>
-        <DrawerContent className="h-[50vh]">
-          <ScrollArea className="mx-auto w-full max-w-sm h-screen flex flex-col gap-2 pt-2">
-            {loadingGet ? (
-              <div className="w-full flex justify-center">
-                <LoaderCircle className="animate-spin" />
-              </div>
-            ) : (
-              myWallet?.map((data) => {
-                const { Icon, iconData } = iconFn(data?.kategori);
-                return (
-                  <button
-                    onClick={() => {
-                      setPickWallet(data as WalletType);
-                      setSeeDrawer(false);
-                    }}
-                    key={data.id}
-                    className="py-2 flex justify-between w-full"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Icon
-                        size={30}
-                        className="p-1 rounded-md"
-                        style={{ backgroundColor: iconData?.color }}
-                      />
-                      <h1 className="text-sm">{data?.name}</h1>
-                    </div>
-                    <p>Rp{data?.balance.toLocaleString("id-ID")}</p>
-                  </button>
-                );
-              })
-            )}
-          </ScrollArea>
-        </DrawerContent>
+      <DrawerContent
+        aria-describedby="drawer-three"
+        buttonClose={false}
+        className="h-[50vh]"
+      >
+        <DrawerTitle className="bg-red-500 hidden">Card wallet</DrawerTitle>
+        <ScrollArea className="mx-auto w-full max-w-sm h-screen flex flex-col gap-2 pt-2">
+          {loadingGet ? (
+            <div className="w-full flex justify-center">
+              <LoaderCircle className="animate-spin" />
+            </div>
+          ) : (
+            myWallet?.map((data) => {
+              const { Icon, iconData } = iconFn(data?.kategori);
+              return (
+                <button
+                  onClick={() => {
+                    setPickWallet(data as WalletType);
+                    setSeeDrawer(false);
+                  }}
+                  key={data.id}
+                  className="py-2 flex justify-between w-full"
+                >
+                  <div className="flex items-center gap-2">
+                    <Icon
+                      size={30}
+                      className="p-1 rounded-md"
+                      style={{ backgroundColor: iconData?.color }}
+                    />
+                    <h1 className="text-sm">{data?.name}</h1>
+                  </div>
+                  <p>Rp{data?.balance.toLocaleString("id-ID")}</p>
+                </button>
+              );
+            })
+          )}
+        </ScrollArea>
       </DrawerContent>
     </Drawer>
   );

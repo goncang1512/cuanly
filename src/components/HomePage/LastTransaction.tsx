@@ -21,7 +21,10 @@ function LastTransaction({ transaction }: { transaction: TransactionType[] }) {
         value="item-1"
         className="bg-neutral-100 rounded-md py-0 px-3"
       >
-        <AccordionTrigger className="justify-center py-3 hover:no-underline">
+        <AccordionTrigger
+          classIcon={`${transaction.length > 0 ? "flex" : "hidden"}`}
+          className="justify-center py-3 hover:no-underline"
+        >
           <div className="flex items-center gap-1">
             <span>Last Activity</span>
             <HoverCard>

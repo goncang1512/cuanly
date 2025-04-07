@@ -82,7 +82,7 @@ export const addMoneyWallet = async (
       results: data,
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return {
       status: false,
       statusCode: 500,

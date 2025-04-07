@@ -34,9 +34,9 @@ async function WalletPage(props: {
     <div className="p-3 flex flex-col gap-3">
       <h1 className="text-2xl font-semibold">Wallet</h1>
       <Tabs defaultValue={query ?? "self"} className="w-full">
-        <TabsList className="grid w-full grid-cols-[1fr_1fr_1fr_0.1fr] bg-transparent gap-3">
+        <TabsList className="grid w-full grid-cols-3 bg-transparent gap-3">
           <TabsWallet />
-          <button className="flex items-center justify-center h-full px-1">
+          <button className="hidden items-center justify-center h-full px-1">
             <Plus />
           </button>
         </TabsList>

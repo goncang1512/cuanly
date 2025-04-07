@@ -15,19 +15,13 @@ export const NavContext = createContext(
     setSeeDrawerTwo: Dispatch<SetStateAction<boolean>>;
     seeDrawerThree: boolean;
     setSeeDrawerThree: Dispatch<SetStateAction<boolean>>;
-    myWallet?: WalletType[] | null;
-    loadingGet?: boolean;
   }
 );
 
 export default function NavContextProvider({
   children,
-  myWallet,
-  loadingGet,
 }: {
   children: React.ReactNode;
-  myWallet?: WalletType[] | null;
-  loadingGet?: boolean;
 }) {
   const [seeDrawerOne, setSeeDrawerOne] = useState(false);
   const [seeDrawerTwo, setSeeDrawerTwo] = useState(false);
@@ -42,11 +36,34 @@ export default function NavContextProvider({
         setSeeDrawerTwo,
         seeDrawerThree,
         setSeeDrawerThree,
-        myWallet,
-        loadingGet,
       }}
     >
       {children}
     </NavContext.Provider>
   );
 }
+
+export const BottomContext = createContext(
+  {} as {
+    myWallet?: WalletType[] | null;
+    loadingGet?: boolean;
+  }
+);
+
+export const BottomContextProvider = ({
+  children,
+  myWallet,
+  loadingGet,
+}: {
+  children: React.ReactNode;
+  myWallet?: WalletType[] | null;
+  loadingGet?: boolean;
+}) => {
+  console.log(myWallet);
+
+  return (
+    <BottomContext.Provider value={{ myWallet, loadingGet }}>
+      {children}
+    </BottomContext.Provider>
+  );
+};
