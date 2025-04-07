@@ -49,7 +49,7 @@ export default function TopBar() {
       }}
       className={`${
         barScroll ? "border-b shadow-xs" : ""
-      }  h-14 fixed top-0 w-full left-0 flex justify-center duration-500`}
+      }  h-14 fixed top-0 w-full z-50 left-0 flex justify-center duration-500`}
     >
       <div className="md:w-3xl w-full flex items-center justify-between px-2">
         <div className="flex items-center gap-2">

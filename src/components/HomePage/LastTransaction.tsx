@@ -7,6 +7,12 @@ import {
 } from "@/components/ui/accordion";
 import { TransactionType } from "@/lib/types";
 import { TransactionShow } from "../TransactionCard";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "../ui/hover-card";
+import { CircleHelp } from "lucide-react";
 
 function LastTransaction({ transaction }: { transaction: TransactionType[] }) {
   return (
@@ -15,8 +21,20 @@ function LastTransaction({ transaction }: { transaction: TransactionType[] }) {
         value="item-1"
         className="bg-neutral-100 rounded-md py-0 px-3"
       >
-        <AccordionTrigger className="justify-center py-3">
-          Last Activity
+        <AccordionTrigger className="justify-center py-3 hover:no-underline">
+          <div className="flex items-center gap-1">
+            <span>Last Activity</span>
+            <HoverCard>
+              <HoverCardTrigger>
+                <CircleHelp size={15} />
+              </HoverCardTrigger>
+              <HoverCardContent>
+                <p className="text-sm text-center">
+                  Displays the last 5 transactions from the previous day.
+                </p>
+              </HoverCardContent>
+            </HoverCard>
+          </div>
         </AccordionTrigger>
         {transaction.map((data, index) => {
           return (

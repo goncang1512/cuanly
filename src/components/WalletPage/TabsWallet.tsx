@@ -19,14 +19,14 @@ export default function TabsWallet() {
         value="self"
         className="rounded-full data-[state=active]:bg-neutral-200"
       >
-        My pocket
+        My wallet
       </TabsTrigger>
       <TabsTrigger
         onClick={() => router.push("/wallet?type=group")}
         value="group"
         className="rounded-full data-[state=active]:bg-neutral-200"
       >
-        Shared pocket
+        Shared wallet
       </TabsTrigger>
     </>
   );

@@ -16,6 +16,8 @@ export type WalletType = {
   kategori: string;
   createdAt: Date;
   updatedAt: Date;
+  transaction?: TransactionType[] | null;
+  moveTransaction?: TransactionType[] | null;
 };
 
 export type UserType = {
@@ -34,10 +36,13 @@ export type TransactionType = {
   description?: string | null;
   balance: number;
   type: $Enums.TransType;
+  status: $Enums.StatusTrans;
   userId: string;
   walletId: string;
+  fromId: string | null;
   createdAt: Date;
   updatedAt: Date;
-  user?: UserType;
-  wallet?: WalletType;
+  user?: UserType | null;
+  wallet?: WalletType | null;
+  fromWallet?: WalletType | null;
 };

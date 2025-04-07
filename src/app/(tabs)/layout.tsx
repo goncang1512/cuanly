@@ -17,7 +17,7 @@ async function layout({ children }: { children: React.ReactNode }) {
   return (
     <GlobalContextProvider>
       <div className="flex justify-center">
-        <div className="min-h-screen md:w-3xl w-full">{children}</div>
+        <div className="min-h-screen md:w-3xl w-full pb-16">{children}</div>
         <BottomNav />
       </div>
     </GlobalContextProvider>

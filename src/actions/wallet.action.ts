@@ -5,6 +5,7 @@ import { generateWalletId } from "@/lib/generateId";
 import prisma from "@/lib/prisma";
 import { ApiResponse, WalletType } from "@/lib/types";
 import { $Enums } from "@prisma/client";
+import { generateId } from "better-auth";
 import { endOfDay, startOfDay } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
@@ -26,11 +27,20 @@ export const getWallet = async () => {
   const transaction = await prisma.transaction.findMany({
     where: {
       userId: session?.user?.id,
+      status: "aktif",
       createdAt: {
         gte: todayStart,
         lte: todayEnd,
       },
     },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      wallet: true,
+      fromWallet: true,
+    },
+    take: 5,
   });
 
   return {
@@ -130,12 +140,35 @@ export const getWalletPage = async (
 
 export const detailWallet = async (wallet_id: string) => {
   try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
     const data = await prisma.wallet.findFirst({
       where: {
         id: wallet_id,
       },
+    });
+
+    const transaction = await prisma.transaction.findMany({
+      where: {
+        OR: [{ walletId: data?.id }, { fromId: data?.id }],
+        status: "aktif",
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
       include: {
-        transaction: true,
+        wallet: true,
+        fromWallet: true,
+      },
+    });
+
+    const count = await prisma.wallet.count({
+      where: {
+        userId: session?.user?.id,
+        NOT: {
+          id: wallet_id,
+        },
       },
     });
 
@@ -143,14 +176,84 @@ export const detailWallet = async (wallet_id: string) => {
       status: true,
       statusCode: 200,
       message: "Success get detail wallet",
-      results: data,
+      results: {
+        wallet: data,
+        transaction,
+        countWallet: count,
+      },
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return {
       status: false,
       statusCode: 500,
       message: "Internal Server Error",
+      results: null,
+    };
+  }
+};
+
+export const getMyWallet = async (prevState: unknown, formData: FormData) => {
+  try {
+    const data = await prisma.wallet.findMany({
+      where: {
+        userId: formData.get("user_id") as string,
+      },
+    });
+
+    return {
+      status: true,
+      statusCode: 200,
+      message: "Success get my wallets",
+      results: data,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      status: false,
+      statusCode: 500,
+      message: "Internal Server Error",
+      results: [],
+    };
+  }
+};
+
+export const adjestAmount = async (prevState: unknown, formData: FormData) => {
+  try {
+    const data = await prisma.wallet.update({
+      where: {
+        id: formData.get("wallet_id") as string,
+      },
+      data: {
+        balance: Number(formData.get("balance")),
+      },
+    });
+
+    await prisma.transaction.create({
+      data: {
+        id: generateId(32),
+        description: "Amount adjustment",
+        category: "adjest-balance",
+        walletId: data?.id,
+        type: "adjust",
+        userId: data?.userId,
+        balance: data?.balance,
+      },
+    });
+
+    revalidatePath(`/wallet/${formData.get("wallet_id")}`);
+    return {
+      status: true,
+      statusCode: 200,
+      message: "Success udpate amount",
+      results: data,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      status: false,
+      statusCode: 500,
+      message: "Invalid update amount",
       results: null,
     };
   }

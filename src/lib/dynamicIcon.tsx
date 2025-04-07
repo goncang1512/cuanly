@@ -16,28 +16,34 @@ import {
   BanknoteArrowUp,
   Gift,
   History,
+  ChartNoAxesCombined,
+  ArrowRightLeft,
+  Bolt,
 } from "lucide-react";
 import React from "react";
 
 // Array of icons with key
 export const icons = [
   { key: "wallet", icon: Wallet, color: "#F5F5DC" },
-  { key: "fashion", icon: Shirt, color: "#FFE4E1" },
   { key: "savings", icon: PiggyBank, color: "#E6F0D8" },
-  { key: "emergency", icon: Ambulance, color: "#FDE2E4" },
-  { key: "education", icon: GraduationCap, color: "#E3F2FD" },
-  { key: "vacation", icon: TicketsPlane, color: "#FFF3CD" },
-  { key: "home", icon: House, color: "#F0EAD6" },
-  { key: "vehicle", icon: Car, color: "#E0F7FA" },
-  { key: "wedding", icon: Gem, color: "#FCE4EC" },
-  { key: "gadget", icon: MonitorSmartphone, color: "#ECEFF1" },
-  { key: "entertaiment", icon: Clapperboard, color: "#F3E5F5" },
-  { key: "charity", icon: HeartHandshake, color: "#E8F5E9" },
+  { key: "out-fashion", icon: Shirt, color: "#FECACA" },
+  { key: "out-emergency", icon: Ambulance, color: "#FECACA" },
+  { key: "out-education", icon: GraduationCap, color: "#FECACA" },
+  { key: "out-vacation", icon: TicketsPlane, color: "#FECACA" },
+  { key: "out-home", icon: House, color: "#FECACA" },
+  { key: "out-vehicle", icon: Car, color: "#FECACA" },
+  { key: "out-wedding", icon: Gem, color: "#FECACA" },
+  { key: "out-gadget", icon: MonitorSmartphone, color: "#FECACA" },
+  { key: "out-entertaiment", icon: Clapperboard, color: "#FECACA" },
+  { key: "out-charity", icon: HeartHandshake, color: "#FECACA" },
+  { key: "out-investasi", icon: ChartNoAxesCombined, color: "#FECACA" },
   { key: "in-wages", icon: BanknoteArrowUp, color: "#DFF5E1" },
-  { key: "in-invest", icon: ChartLine, color: "#DFF5E1" },
+  { key: "in-investasi", icon: ChartLine, color: "#DFF5E1" },
   { key: "in-part time", icon: History, color: "#DFF5E1" },
   { key: "in-award", icon: Gift, color: "#DFF5E1" },
   { key: "in-other", icon: CircleDollarSign, color: "#DFF5E1" },
+  { key: "switch-money", icon: ArrowRightLeft, color: "#E6F0D8" },
+  { key: "adjest-balance", icon: Bolt, color: "#F5F5DC" },
 ] as const;
 
 type IconEntry = (typeof icons)[number];

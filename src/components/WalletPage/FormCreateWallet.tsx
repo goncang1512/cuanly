@@ -29,6 +29,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { iconFn, icons } from "@/lib/dynamicIcon";
 
 type WalletTypeValue = {
   name: string;
@@ -104,17 +105,32 @@ export default function FormCreateWallet() {
         </div>
         <div className="grid w-full items-center gap-1.5">
           <Label htmlFor="kategori">Kategori</Label>
-          <Input
-            value={formValue.category}
-            onChange={(e) =>
-              setFormValue({ ...formValue, category: e.target.value })
-            }
-            type="text"
-            id="kategori"
-            name="kategori"
-            placeholder="invest"
+          <Select
             required
-          />
+            name="kategori"
+            value={formValue.category}
+            onValueChange={(e) => setFormValue({ ...formValue, category: e })}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {icons.map((data, index) => {
+                  const { Icon } = iconFn(data?.key);
+                  return (
+                    <SelectItem
+                      className="capitalize"
+                      value={data?.key}
+                      key={index}
+                    >
+                      <Icon /> {data?.key.split("-")[1] ?? data?.key}
+                    </SelectItem>
+                  );
+                })}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
         <div className="grid w-full items-center gap-1.5">
           <Label htmlFor="type">Jenis</Label>

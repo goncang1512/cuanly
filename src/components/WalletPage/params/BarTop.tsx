@@ -8,7 +8,7 @@ import React from "react";
 export default function BarTop() {
   const router = useRouter();
   return (
-    <div className="bg-neutral-50 fixed top-0 left-0 w-full h-14 py-2 px-3 flex items-center justify-center">
+    <div className="bg-neutral-50 fixed z-50 top-0 left-0 w-full h-14 py-2 px-3 flex items-center justify-center">
       <div className="md:w-3xl w-full flex items-center justify-between">
         <div className="flex items-center gap-2">
           <button onClick={() => router.back()}>

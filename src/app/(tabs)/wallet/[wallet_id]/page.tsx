@@ -3,10 +3,11 @@ import { Input } from "@/components/ui/input";
 import BarTop from "@/components/WalletPage/params/BarTop";
 import FormAddMoney from "@/components/WalletPage/params/FormAddMoney";
 import { TopDetail } from "@/components/WalletPage/params/TopDetail";
-import { TransactionType } from "@/lib/types";
-import { ArrowRight, ArrowUp, ListFilter, Search } from "lucide-react";
+import { ArrowRight, ArrowUp, ListFilter, Plus, Search } from "lucide-react";
 import React from "react";
-import TransactionCard from "@/components/TransactionCard";
+import { DrawerTrigger } from "@/components/ui/drawer";
+import WalletContextProvider from "@/lib/context/WalletContext";
+import WalletTransaction from "@/components/WalletPage/params/WalletTransaction";
 
 export default async function WalletDetail({
   params,
@@ -15,29 +16,57 @@ export default async function WalletDetail({
 }) {
   const { wallet_id } = await params;
   const wallet = await detailWallet(wallet_id);
+  const walletNew = wallet?.results?.wallet;
+  const countWallet = wallet?.results?.countWallet;
 
   return (
-    <div>
+    <WalletContextProvider transaction={wallet?.results?.transaction}>
       <BarTop />
-      <div className="pt-14 min-h-[200vh] flex flex-col gap-3">
-        <TopDetail wallet={wallet?.results} />
+      <div className="pt-14 min-h-screen flex flex-col gap-3">
+        <TopDetail wallet={walletNew ?? null} />
 
         <div className="flex justify-center gap-3">
           <div className="flex flex-col items-center w-max">
-            <FormAddMoney wallet={wallet?.results} />
+            <FormAddMoney typeTransaction="add" wallet={walletNew ?? null}>
+              <DrawerTrigger className="bg-emerald text-white size-10 rounded-full flex items-center justify-center">
+                <Plus size={30} />
+              </DrawerTrigger>
+            </FormAddMoney>
 
             <h1 className="text-sm font-medium">Add money</h1>
           </div>
           <div className="flex flex-col items-center w-max">
-            <button className="bg-neutral-200 text-neutral-400 size-10 rounded-full flex items-center justify-center">
-              <ArrowUp size={30} />
-            </button>
+            <FormAddMoney typeTransaction="move" wallet={walletNew ?? null}>
+              <DrawerTrigger
+                disabled={
+                  Number(countWallet) < 1 ||
+                  Number(wallet?.results?.wallet?.balance) <= 0
+                }
+                className={`${
+                  Number(countWallet) >= 1 &&
+                  Number(wallet?.results?.wallet?.balance) > 0
+                    ? "bg-emerald text-white"
+                    : "bg-neutral-200 text-neutral-400"
+                }  size-10 rounded-full flex items-center justify-center`}
+              >
+                <ArrowUp size={30} />
+              </DrawerTrigger>
+            </FormAddMoney>
             <h1 className="text-sm font-medium">Move money</h1>
           </div>
           <div className="flex flex-col items-center w-max">
-            <button className="bg-neutral-200 text-neutral-400 size-10 rounded-full flex items-center justify-center">
-              <ArrowRight size={30} />
-            </button>
+            <FormAddMoney typeTransaction="pay" wallet={walletNew ?? null}>
+              <DrawerTrigger
+                disabled={Number(wallet?.results?.wallet?.balance) <= 0}
+                className={`${
+                  Number(wallet?.results?.wallet?.balance) > 0
+                    ? "bg-emerald text-white"
+                    : "bg-neutral-200 text-neutral-400"
+                }    size-10 rounded-full flex items-center justify-center`}
+              >
+                <ArrowRight size={30} />
+              </DrawerTrigger>
+            </FormAddMoney>
             <h1 className="text-sm font-medium">Transfer & Pay</h1>
           </div>
         </div>
@@ -61,22 +90,9 @@ export default async function WalletDetail({
               <ListFilter size={20} />
             </button>
           </form>
-          <div>
-            {wallet?.results?.transaction.map(
-              (data: TransactionType, index: number) => {
-                return (
-                  <TransactionCard
-                    data={data}
-                    index={index}
-                    key={data?.id}
-                    banyak={wallet?.results?.transaction?.length}
-                  />
-                );
-              }
-            )}
-          </div>
+          <WalletTransaction />
         </div>
       </div>
-    </div>
+    </WalletContextProvider>
   );
 }
