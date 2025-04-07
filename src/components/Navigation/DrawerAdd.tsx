@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  startTransition,
+  useActionState,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import {
   Drawer,
   DrawerContent,
@@ -10,7 +16,11 @@ import { X } from "lucide-react";
 import FormAddTrans from "./FormAddTrans";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { iconFn, icons } from "@/lib/dynamicIcon";
-import { NavContext } from "@/lib/context/NavContext";
+import NavContextProvider, { NavContext } from "@/lib/context/NavContext";
+import TransMoney from "./TransMoney";
+import { authClient } from "@/lib/auth-client";
+import { getMyWalletTrans } from "@/actions/wallet.action";
+import { WalletType } from "@/lib/types";
 
 // DRAWER ONE 11111111
 function DrawerAdd() {
@@ -32,47 +42,66 @@ function DrawerAdd() {
     };
   }, [seeDrawerOne]);
 
+  const session = authClient.useSession();
+  const [state, formAcion, isPending] = useActionState(getMyWalletTrans, null);
+
+  useEffect(() => {
+    if (!session?.data?.user?.id || !seeDrawerOne) return;
+
+    const formData = new FormData();
+    formData.append("user_id", String(session.data.user.id));
+
+    startTransition(() => {
+      formAcion(formData);
+    });
+  }, [session?.data?.user?.id, seeDrawerOne]);
+
   return (
-    <Drawer open={seeDrawerOne} onOpenChange={setSeeDrawerOne}>
-      <DrawerTrigger asChild>
-        <button className="bg-emerald hover:bg-dark-emerald absolute -top-3 left-1/2 transform -translate-x-1/2 size-12 flex items-center justify-center text-white rounded-full">
-          <svg
-            className="size-8 text-white"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            width="25"
-            height="25"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M5 12h14m-7 7V5"
-            />
-          </svg>
-        </button>
-      </DrawerTrigger>
-      <DrawerContent
-        buttonClose={false}
-        className="data-[vaul-drawer-direction=bottom]:max-h-[100vh] data-[vaul-drawer-direction=bottom]:rounded-none data-[vaul-drawer-direction=bottom]:border-0"
-      >
-        <DrawerHeader className="bg-emerald flex justify-center">
-          <button
-            onClick={() => setSeeDrawerOne(false)}
-            className="absolute right-3 top-2"
-          >
-            <X />
+    <NavContextProvider
+      myWallet={state?.results as WalletType[]}
+      loadingGet={isPending}
+    >
+      <Drawer open={seeDrawerOne} onOpenChange={setSeeDrawerOne}>
+        <DrawerTrigger asChild>
+          <button className="bg-emerald hover:bg-dark-emerald absolute -top-3 left-1/2 transform -translate-x-1/2 size-12 flex items-center justify-center text-white rounded-full">
+            <svg
+              className="size-8 text-white"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="25"
+              height="25"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 12h14m-7 7V5"
+              />
+            </svg>
           </button>
-          <DrawerTitle className="text-center">Add Transaction</DrawerTitle>
-        </DrawerHeader>
-        <div className="w-full h-screen">
-          <TabsTransactionDraw />
-        </div>
-      </DrawerContent>
-    </Drawer>
+        </DrawerTrigger>
+        <DrawerContent
+          buttonClose={false}
+          className="data-[vaul-drawer-direction=bottom]:max-h-[100vh] data-[vaul-drawer-direction=bottom]:rounded-none data-[vaul-drawer-direction=bottom]:border-0"
+        >
+          <DrawerHeader className="bg-emerald flex justify-center">
+            <button
+              onClick={() => setSeeDrawerOne(false)}
+              className="absolute right-3 top-2"
+            >
+              <X />
+            </button>
+            <DrawerTitle className="text-center">Add Transaction</DrawerTitle>
+          </DrawerHeader>
+          <div className="w-full h-screen">
+            <TabsTransactionDraw />
+          </div>
+        </DrawerContent>
+      </Drawer>
+    </NavContextProvider>
   );
 }
 
@@ -168,7 +197,9 @@ export const TabsTransactionDraw = () => {
             })}
           </div>
         </TabsContent>
-        <TabsContent value="transfer">MOVE</TabsContent>
+        <TabsContent value="transfer">
+          <TransMoney />
+        </TabsContent>
       </div>
     </Tabs>
   );

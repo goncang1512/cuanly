@@ -1,8 +1,6 @@
 import React, {
   Dispatch,
   SetStateAction,
-  startTransition,
-  useActionState,
   useContext,
   useEffect,
   useState,
@@ -18,7 +16,6 @@ import { useFormActionState } from "@/lib/customHook/useFormActionState";
 import { addMoneyWallet } from "@/actions/transaction.action";
 import { IdCard, LoaderCircle } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
-import { getMyWalletTrans } from "@/actions/wallet.action";
 import { authClient } from "@/lib/auth-client";
 import { iconFn } from "@/lib/dynamicIcon";
 import { WalletType } from "@/lib/types";
@@ -164,20 +161,8 @@ export const PickWallet = ({
   pickWallet?: WalletType;
   setPickWallet: Dispatch<SetStateAction<WalletType | undefined>>;
 }) => {
-  const session = authClient.useSession();
   const [seeDrawer, setSeeDrawer] = useState(false);
-  const [state, formAcion, isPending] = useActionState(getMyWalletTrans, null);
-
-  useEffect(() => {
-    if (!session?.data?.user?.id) return;
-
-    const formData = new FormData();
-    formData.append("user_id", String(session.data.user.id));
-
-    startTransition(() => {
-      formAcion(formData);
-    });
-  }, [session?.data?.user?.id]);
+  const { myWallet, loadingGet } = useContext(NavContext);
 
   const { Icon, iconData } = iconFn(String(pickWallet?.kategori));
 
@@ -193,12 +178,12 @@ export const PickWallet = ({
         <DrawerTitle hidden>Card wallet</DrawerTitle>
         <DrawerContent className="h-[50vh]">
           <ScrollArea className="mx-auto w-full max-w-sm h-screen flex flex-col gap-2 pt-2">
-            {isPending ? (
+            {loadingGet ? (
               <div className="w-full flex justify-center">
                 <LoaderCircle className="animate-spin" />
               </div>
             ) : (
-              state?.results?.map((data) => {
+              myWallet?.map((data) => {
                 const { Icon, iconData } = iconFn(data?.kategori);
                 return (
                   <button
