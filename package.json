@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "postinstall": "prisma generate",
     "generate": "npx prisma generate && npx prisma db push",
     "generate:better": "npx @better-auth/cli generate",
     "migrate": "npx prisma db push"
