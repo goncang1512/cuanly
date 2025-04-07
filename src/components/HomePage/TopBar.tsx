@@ -61,7 +61,7 @@ export default function TopBar() {
             className="font-semibold duration-500"
             style={{ fontSize: !barScroll ? `${sizeIcon.font}px` : "16px" }}
           >
-            Dompetku
+            CuanLy
           </h1>
         </div>
 

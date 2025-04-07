@@ -5,7 +5,7 @@ import { ArrowLeft, Ellipsis } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-export default function BarTop() {
+export default function BarTop({ name }: { name: string }) {
   const router = useRouter();
   return (
     <div className="bg-neutral-50 fixed z-50 top-0 left-0 w-full h-14 py-2 px-3 flex items-center justify-center">
@@ -23,9 +23,11 @@ export default function BarTop() {
           <DrawerContent className="h-[50vh]">
             <DialogTitle hidden>Wallet context</DialogTitle>
             <div className="mx-auto w-full max-w-sm mt-2">
-              <button className="px-2 py-3 hover:bg-neutral-200 w-full text-start">
-                Delete wallet
-              </button>
+              {name !== "Dompet Utama" && (
+                <button className="px-2 py-3 hover:bg-neutral-200 w-full text-start">
+                  Delete wallet
+                </button>
+              )}
             </div>
           </DrawerContent>
         </Drawer>

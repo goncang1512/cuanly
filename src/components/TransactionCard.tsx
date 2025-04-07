@@ -90,8 +90,10 @@ export const TransactionShow = ({ data }: { data: TransactionType }) => {
             {separator} Rp
             {data?.balance.toLocaleString("id-ID")}
           </span>
+          {data?.type === "adjust" && !params?.wallet_id && (
+            <p className="text-xs">{data?.wallet?.name}</p>
+          )}
           {data?.type === "move" &&
-            data?.userId !== "goncang" &&
             (data?.fromId === params?.wallet_id ? (
               <p className="text-xs flex items-center gap-2">
                 {data?.fromWallet?.name} <ArrowRight size={13} />{" "}

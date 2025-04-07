@@ -127,8 +127,8 @@ export const getWalletPage = async (
       message: "Success get my pocket",
       results: sortedWallets,
     };
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
+    console.error(error);
     return {
       status: false,
       statusCode: 500,
@@ -255,6 +255,42 @@ export const adjestAmount = async (prevState: unknown, formData: FormData) => {
       statusCode: 500,
       message: "Invalid update amount",
       results: null,
+    };
+  }
+};
+
+export const getMyWalletTrans = async (
+  prevState: unknown,
+  formData: FormData
+) => {
+  try {
+    const user_id = formData.get("user_id") as string;
+
+    const data = await prisma.wallet.findMany({
+      where: {
+        userId: user_id,
+      },
+      select: {
+        id: true,
+        name: true,
+        kategori: true,
+        balance: true,
+      },
+    });
+
+    return {
+      status: true,
+      statusCode: 200,
+      message: "Success get my wallet",
+      results: data,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      status: false,
+      statusCode: 500,
+      message: "Internal Server Error",
+      results: [],
     };
   }
 };

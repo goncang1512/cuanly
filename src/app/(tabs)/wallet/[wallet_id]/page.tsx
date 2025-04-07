@@ -20,8 +20,11 @@ export default async function WalletDetail({
   const countWallet = wallet?.results?.countWallet;
 
   return (
-    <WalletContextProvider transaction={wallet?.results?.transaction}>
-      <BarTop />
+    <WalletContextProvider
+      walletNew={walletNew}
+      transaction={wallet?.results?.transaction}
+    >
+      <BarTop name={String(walletNew?.name)} />
       <div className="pt-14 min-h-screen flex flex-col gap-3">
         <TopDetail wallet={walletNew ?? null} />
 

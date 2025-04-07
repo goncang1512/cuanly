@@ -5,7 +5,12 @@ import { authClient } from "@/lib/auth-client";
 import { useFormActionState } from "@/lib/customHook/useFormActionState";
 import { iconFn } from "@/lib/dynamicIcon";
 import { WalletType } from "@/lib/types";
-import React, { startTransition, useEffect } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  startTransition,
+  useEffect,
+} from "react";
 import { Card } from "@/components/ui/card";
 import { useGlobalState } from "@/lib/context/GlobalContext";
 import { FormTypeTrans } from "./FormAddMoney";
@@ -14,9 +19,11 @@ import { useParams } from "next/navigation";
 export const TabsWallet = ({
   formValue,
   setFormValue,
+  setWalletPick,
 }: {
   formValue: FormTypeTrans;
   setFormValue: (updatedFields: Partial<FormTypeTrans>) => void;
+  setWalletPick: Dispatch<SetStateAction<WalletType | null | undefined>>;
 }) => {
   const params = useParams();
   const session = authClient.useSession();
@@ -46,9 +53,10 @@ export const TabsWallet = ({
 
           return (
             <Card
-              onClick={() =>
-                setFormValue({ ...formValue, pickCategory: data?.id })
-              }
+              onClick={() => {
+                setFormValue({ ...formValue, pickCategory: data?.id });
+                setWalletPick(data);
+              }}
               key={data.id}
               className={`${
                 formValue.pickCategory === data?.id && "bg-emerald-400"

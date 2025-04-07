@@ -46,6 +46,7 @@ export default function FormAddMoney({
   typeTransaction: $Enums.TransType;
 }) {
   const [seeDrawer, setSeeDrawer] = useState(false);
+  const [walletPick, setWalletPick] = useState<WalletType | null | undefined>();
   const { handleAction } = useContext(WalletContext);
   const { formValue, setFormValue, isPending, formAction } =
     useFormActionState<FormTypeTrans>(addMoneyWallet, dataForm);
@@ -93,7 +94,8 @@ export default function FormAddMoney({
                       ? (formData.get("methodpay") as string)
                       : typeTransaction,
                     wallet,
-                    formAction
+                    formAction,
+                    walletPick
                   );
                 }}
                 className="w-full mt-2 flex flex-col gap-3"
@@ -159,7 +161,7 @@ export default function FormAddMoney({
               </form>
             </TabsContent>
             <TabsContent value="category">
-              <div className="grid grid-cols-3 gap-3 ">
+              <div className="grid grid-cols-3 gap-3">
                 {icons?.map((data, index) => {
                   const trans =
                     typeTransaction === "add"
@@ -195,7 +197,11 @@ export default function FormAddMoney({
                 })}
               </div>
             </TabsContent>
-            <TabsWallet formValue={formValue} setFormValue={setFormValue} />
+            <TabsWallet
+              setWalletPick={setWalletPick}
+              formValue={formValue}
+              setFormValue={setFormValue}
+            />
           </Tabs>
         </div>
       </DrawerContent>

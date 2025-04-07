@@ -16,7 +16,8 @@ interface WalletInterface {
     formValue: FormTypeTrans,
     typeTransaction: string,
     wallet: WalletType | null,
-    formAction: (formData: FormData) => void
+    formAction: (formData: FormData) => void,
+    walletPick?: WalletType | null
   ) => void;
   deleteTransaction: (
     formData: FormData,
@@ -30,9 +31,11 @@ export const WalletContext = createContext({} as WalletInterface);
 function WalletContextProvider({
   children,
   transaction,
+  walletNew,
 }: {
   children: React.ReactNode;
   transaction?: TransactionType[] | null;
+  walletNew?: WalletType | null;
 }) {
   const session = authClient.useSession();
   const [optimisticTrans, addOptimisticTrans] = useOptimistic(
@@ -47,7 +50,8 @@ function WalletContextProvider({
     formValue: FormTypeTrans,
     typeTransaction: string,
     wallet: WalletType | null,
-    formAction: (formData: FormData) => void
+    formAction: (formData: FormData) => void,
+    walletPick?: WalletType | null
   ) => {
     formData.append("amount", formValue.rawValue);
     formData.append("user_id", String(session?.data?.user?.id));
@@ -80,8 +84,10 @@ function WalletContextProvider({
       type: typeTransaction as $Enums.TransType,
       description: String(formData.get("description")),
       userId: "goncang",
-      walletId: "",
-      fromId: null,
+      walletId: String(walletPick?.id),
+      fromId: String(walletNew?.id),
+      wallet: walletPick,
+      fromWallet: walletNew,
       createdAt: new Date(),
       updatedAt: new Date(),
       status: "aktif",

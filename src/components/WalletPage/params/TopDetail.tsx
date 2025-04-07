@@ -69,7 +69,7 @@ export function TopDetail({ wallet }: { wallet: WalletType | null }) {
       type: "adjust",
       status: "aktif",
       userId: "goncang",
-      walletId: "",
+      walletId: String(wallet?.id),
       fromId: null,
       createdAt: new Date(),
       updatedAt: new Date(),

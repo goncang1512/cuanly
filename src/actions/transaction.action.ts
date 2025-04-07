@@ -69,6 +69,11 @@ export const addMoneyWallet = async (
       }
     }
 
+    const pathname = formData.get("pathname");
+    if (pathname) {
+      revalidatePath(String(pathname));
+    }
+
     revalidatePath(`/wallet/${data?.fromId ?? data?.walletId}`);
     return {
       status: true,
@@ -92,12 +97,9 @@ export const deleteTransaction = async (
   formData: FormData
 ) => {
   try {
-    const data = await prisma.transaction.update({
+    const data = await prisma.transaction.delete({
       where: {
         id: formData.get("trans_id") as string,
-      },
-      data: {
-        status: "delete",
       },
     });
 
@@ -107,6 +109,25 @@ export const deleteTransaction = async (
       statusCode: 200,
       message: "Success delete transaction",
       reuslts: data,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      status: false,
+      statusCode: 500,
+      message: "Internal Server Error",
+      results: null,
+    };
+  }
+};
+
+export const createTransactionNav = async () => {
+  try {
+    return {
+      status: true,
+      statusCode: 201,
+      message: "Success create transactions",
+      results: null,
     };
   } catch (error) {
     console.error(error);
