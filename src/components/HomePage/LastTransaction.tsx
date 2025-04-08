@@ -7,12 +7,8 @@ import {
 } from "@/components/ui/accordion";
 import { TransactionType } from "@/lib/types";
 import { TransactionShow } from "../TransactionCard";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "../ui/hover-card";
-import { CircleHelp } from "lucide-react";
+import { CircleHelp, RefreshCcw } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 function LastTransaction({ transaction }: { transaction: TransactionType[] }) {
   return (
@@ -27,27 +23,51 @@ function LastTransaction({ transaction }: { transaction: TransactionType[] }) {
         >
           <div className="flex items-center gap-1">
             <span>Last Activity</span>
-            <HoverCard>
-              <HoverCardTrigger>
-                <CircleHelp size={15} />
-              </HoverCardTrigger>
-              <HoverCardContent>
+            <Popover>
+              <PopoverTrigger asChild>
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="cursor-pointer"
+                >
+                  <CircleHelp size={15} />
+                </div>
+              </PopoverTrigger>
+              <PopoverContent onClick={(e) => e.stopPropagation()}>
                 <p className="text-sm text-center">
                   Displays the last 5 transactions from the previous day.
                 </p>
-              </HoverCardContent>
-            </HoverCard>
+              </PopoverContent>
+            </Popover>
           </div>
         </AccordionTrigger>
         {transaction.map((data, index) => {
+          const separator =
+            data?.type === "add" ? (
+              "+"
+            ) : ["transfer", "pay"].includes(data?.type) ? (
+              "-"
+            ) : (
+              <RefreshCcw size={13} />
+            );
+
+          const colorSeparator =
+            data?.type === "add"
+              ? "text-emerald-600"
+              : ["transfer", "pay"].includes(data?.type)
+              ? "text-red-500"
+              : "text-neutral-900";
           return (
             <AccordionContent
               key={data?.id}
               className={`${
                 index + 1 === transaction.length ? "" : "border-b"
-              } px-3 py-2 flex items-center justify-between border-neutral-300`}
+              } flex px-0 py-0 items-center justify-between border-neutral-300`}
             >
-              <TransactionShow data={data} />
+              <TransactionShow
+                colorSeparator={colorSeparator}
+                separator={separator}
+                data={data}
+              />
             </AccordionContent>
           );
         })}
