@@ -91,7 +91,6 @@ export const FormMoveMoney = ({
       onOpenChange={setSeeDrawerThree}
       onClose={() => {
         setPickToWallet(undefined);
-        setPickWallet(undefined);
       }}
     >
       <DrawerContent

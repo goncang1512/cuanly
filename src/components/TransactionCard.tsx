@@ -71,7 +71,7 @@ export default function TransactionCard({
           }}
           open={dialog}
         >
-          <DialogTrigger className="w-full">
+          <DialogTrigger className="w-full cursor-pointer">
             <TransactionShow
               data={data}
               separator={separator}
@@ -190,7 +190,7 @@ export const TransactionShow = ({
   const params = useParams();
 
   return (
-    <div className="flex justify-between  w-full  px-3 py-2 cursor-pointer">
+    <div className="flex justify-between  w-full  px-3 py-2">
       <div className="flex items-center gap-3 flex-1">
         <Icon
           style={{ backgroundColor: iconData?.color }}
