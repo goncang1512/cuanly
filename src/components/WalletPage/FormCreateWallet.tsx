@@ -35,12 +35,14 @@ type WalletTypeValue = {
   name: string;
   category: string;
   type: string;
+  icon: string;
 };
 
 const walletVal = {
   name: "",
   category: "",
   type: "",
+  icon: "",
 };
 
 const WalletContext = createContext(
@@ -104,15 +106,39 @@ export default function FormCreateWallet() {
           />
         </div>
         <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="kategori">Kategori</Label>
+          <Label htmlFor="category">Category</Label>
           <Select
             required
-            name="kategori"
+            name="category"
             value={formValue.category}
             onValueChange={(e) => setFormValue({ ...formValue, category: e })}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {["default", "debt", "receivable", "investment", "asset"].map(
+                  (data: string, index) => (
+                    <SelectItem value={data} key={index} className="capitalize">
+                      {data}
+                    </SelectItem>
+                  )
+                )}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="grid w-full items-center gap-1.5">
+          <Label htmlFor="icon">Icon</Label>
+          <Select
+            required
+            name="newicon"
+            value={formValue.icon}
+            onValueChange={(e) => setFormValue({ ...formValue, icon: e })}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a icon" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>

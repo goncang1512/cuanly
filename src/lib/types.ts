@@ -14,6 +14,7 @@ export type WalletType = {
   type: $Enums.TypeWallet; // bisa kamu ganti jadi enum jika type-nya fixed
   userId: string;
   kategori: string;
+  category: $Enums.CateWallet;
   createdAt: Date;
   updatedAt: Date;
   transaction?: TransactionType[] | null;

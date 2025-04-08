@@ -121,13 +121,29 @@ export const deleteTransaction = async (
   }
 };
 
-export const createTransactionNav = async () => {
+export const updateTransaction = async (
+  prevState: unknown,
+  formData: FormData
+) => {
   try {
+    const data = await prisma.transaction.update({
+      where: {
+        id: formData.get("trans_id") as string,
+      },
+      data: {
+        description: formData.get("description") as string,
+        type: formData.get("paymentmethod") as $Enums.TransType,
+        balance: Number(formData.get("amount")),
+        category: formData.get("category") as string,
+      },
+    });
+
+    revalidatePath(`/wallet/${data?.walletId}`);
     return {
       status: true,
       statusCode: 201,
       message: "Success create transactions",
-      results: null,
+      results: data,
     };
   } catch (error) {
     console.error(error);

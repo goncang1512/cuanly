@@ -8,7 +8,7 @@ export default async function Home() {
   return (
     <div className="p-2">
       <TopBar />
-      <div className="pt-14 h-[300vh]">
+      <div className="pt-14 min-h-screen">
         <CardWallet
           wallet={data?.results?.wallet}
           transaction={data?.results?.transaction}

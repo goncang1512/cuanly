@@ -17,12 +17,13 @@ import { iconFn } from "@/lib/dynamicIcon";
 import { WalletType } from "@/lib/types";
 import { generateId } from "better-auth";
 import { Ellipsis, Eye, EyeOff, Pencil } from "lucide-react";
-import React, { useContext, useEffect, useOptimistic, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 export function TopDetail({ wallet }: { wallet: WalletType | null }) {
   const { seeSaldo, setSeeSaldo } = useGlobalState();
   const [seeDrawer, setSeeDrawer] = useState(false);
-  const { addOptimisticTrans } = useContext(WalletContext);
+  const { addOptimisticTrans, updateAmount, optimisticValue } =
+    useContext(WalletContext);
   const { Icon } = iconFn(String(wallet?.kategori));
   const { formAction, isPending, setFormValue, formValue } = useFormActionState(
     adjestAmount,
@@ -47,13 +48,6 @@ export function TopDetail({ wallet }: { wallet: WalletType | null }) {
       rawAmount: numeric,
     });
   };
-
-  const [optimisticValue, updateAmount] = useOptimistic(
-    wallet?.balance,
-    (state, newState) => {
-      return Number(newState);
-    }
-  );
 
   const handleUpdateAmount = (formData: FormData) => {
     formData.append("wallet_id", String(wallet?.id));

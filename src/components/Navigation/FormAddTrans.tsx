@@ -110,7 +110,7 @@ export default function FormAddTrans({
       <DrawerContent
         aria-describedby="drawer-two"
         classLay="bg-transparent"
-        className="border-t h-[30vh] md:h-[60vh] data-[vaul-drawer-direction=bottom]:rounded-none"
+        className="border-t h-[30vh] md:px-0 px-3 md:h-[60vh] data-[vaul-drawer-direction=bottom]:rounded-none"
       >
         <DrawerTitle hidden>Add transaction</DrawerTitle>
         <form

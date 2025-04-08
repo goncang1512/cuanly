@@ -19,6 +19,7 @@ import {
   ChartNoAxesCombined,
   ArrowRightLeft,
   Bolt,
+  UtensilsCrossed,
 } from "lucide-react";
 import React from "react";
 
@@ -37,6 +38,7 @@ export const icons = [
   { key: "out-entertaiment", icon: Clapperboard, color: "#FECACA" },
   { key: "out-charity", icon: HeartHandshake, color: "#FECACA" },
   { key: "out-investasi", icon: ChartNoAxesCombined, color: "#FECACA" },
+  { key: "out-food", icon: UtensilsCrossed, color: "#FECACA" },
   { key: "in-wages", icon: BanknoteArrowUp, color: "#DFF5E1" },
   { key: "in-investasi", icon: ChartLine, color: "#DFF5E1" },
   { key: "in-part time", icon: History, color: "#DFF5E1" },

@@ -90,7 +90,7 @@ export const PickWallet = ({
       <DrawerContent
         aria-describedby="drawer-three"
         buttonClose={false}
-        className="h-[50vh]"
+        className="h-[50vh] md:px-0 px-3"
       >
         <DrawerTitle className="bg-red-500 hidden">Card wallet</DrawerTitle>
         <ScrollArea className="mx-auto w-full max-w-sm h-screen flex flex-col gap-2 pt-2">

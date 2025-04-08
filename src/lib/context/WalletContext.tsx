@@ -24,6 +24,8 @@ interface WalletInterface {
     formAction: (formData: FormData) => void,
     trans_id: string
   ) => void;
+  optimisticValue?: number;
+  updateAmount: (action: string) => void;
 }
 
 export const WalletContext = createContext({} as WalletInterface);
@@ -41,7 +43,19 @@ function WalletContextProvider({
   const [optimisticTrans, addOptimisticTrans] = useOptimistic(
     transaction ?? [],
     (state, newTransaction: TransactionType & { actionType?: string }) => {
+      if (newTransaction.actionType === "edit") {
+        return state.map((t) =>
+          t.id === newTransaction.id ? { ...t, ...newTransaction } : t
+        );
+      }
       return [newTransaction, ...state];
+    }
+  );
+
+  const [optimisticValue, updateAmount] = useOptimistic(
+    walletNew?.balance,
+    (state, newState) => {
+      return Number(newState);
     }
   );
 
@@ -66,9 +80,9 @@ function WalletContextProvider({
     }
 
     if (
-      (Number(formValue.rawValue) > Number(wallet?.balance) &&
-        typeTransaction !== "add") ||
-      !formValue.pickCategory
+      typeTransaction !== "add" &&
+      String(wallet?.category) !== "receivable" &&
+      Number(formValue.rawValue) > Number(wallet?.balance)
     ) {
       toast("Balance is not sufficient for transaction", {
         description: "Top up your balance again",
@@ -77,6 +91,14 @@ function WalletContextProvider({
       return;
     }
 
+    let addMoney: number = 0;
+    if (typeTransaction === "add") {
+      addMoney += Number(formValue?.rawValue);
+    } else {
+      addMoney -= Number(formValue?.rawValue);
+    }
+    updateAmount(addMoney);
+
     addOptimisticTrans({
       id: generateId(32),
       category: typeTransaction === "move" ? "savings" : formValue.pickCategory,
@@ -84,6 +106,7 @@ function WalletContextProvider({
       type: typeTransaction as $Enums.TransType,
       description: String(formData.get("description")),
       userId: "goncang",
+      actionType: "new",
       walletId: String(walletPick?.id),
       fromId: String(walletNew?.id),
       wallet: walletPick,
@@ -114,6 +137,8 @@ function WalletContextProvider({
         optimisticTrans,
         handleAction,
         deleteTransaction,
+        optimisticValue,
+        updateAmount,
       }}
     >
       {children}

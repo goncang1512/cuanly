@@ -2,7 +2,7 @@
 import { deleteTransaction } from "@/actions/transaction.action";
 import { WalletContext } from "@/lib/context/WalletContext";
 import { useFormActionState } from "@/lib/customHook/useFormActionState";
-import { iconFn } from "@/lib/dynamicIcon";
+import { iconFn, icons } from "@/lib/dynamicIcon";
 import { formatDate } from "@/lib/time";
 import { TransactionType } from "@/lib/types";
 import { ArrowLeft, ArrowRight, RefreshCcw, Timer } from "lucide-react";
@@ -17,8 +17,9 @@ import {
 } from "./ui/dialog";
 import { Table, TableBody, TableCell, TableRow } from "./ui/table";
 import { Button } from "./ui/button";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
+import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
+import { ScrollArea } from "./ui/scroll-area";
+import { EditTransaction } from "./WalletPage/params/EditTransaction";
 
 export default function TransactionCard({
   data,
@@ -30,6 +31,10 @@ export default function TransactionCard({
   index: number;
 }) {
   const { deleteTransaction: handleDelete } = useContext(WalletContext);
+  const [newIcon, setNewIcon] = useState({
+    key: "",
+    drawer: false,
+  });
   const [dialog, setDialog] = useState(false);
   const [editChange, setEditChange] = useState(false);
   const { formAction, isPending } = useFormActionState(deleteTransaction, null);
@@ -38,7 +43,9 @@ export default function TransactionCard({
     return null;
   }
 
-  const { Icon, iconData } = iconFn(data?.category);
+  const { Icon, iconData } = iconFn(
+    newIcon.key !== "" ? newIcon.key : data?.category
+  );
   const separator =
     data?.type === "add" ? (
       "+"
@@ -84,20 +91,64 @@ export default function TransactionCard({
             </DialogHeader>
             <div className="h-full w-full">
               <div className="p-4">
-                <div
-                  style={{ backgroundColor: iconData?.color }}
-                  className="p-1 rounded-full w-max"
+                <Drawer
+                  open={newIcon.drawer}
+                  onOpenChange={(open) =>
+                    setNewIcon({ ...newIcon, drawer: open })
+                  }
                 >
-                  <Icon size={40} />
-                </div>
+                  <DrawerTrigger
+                    disabled={!editChange}
+                    className="disabled:cursor-default"
+                  >
+                    <div
+                      style={{ backgroundColor: iconData?.color }}
+                      className="p-1 rounded-full w-max"
+                    >
+                      <Icon size={40} />
+                    </div>
+                  </DrawerTrigger>
+                  <DrawerContent className="h-[60vh]">
+                    <ScrollArea className="h-[57vh] py-2">
+                      <div className="mx-auto w-full max-w-sm grid grid-cols-3 gap-3 p-2">
+                        {icons.map((data, index) => {
+                          const { Icon, iconData } = iconFn(data?.key);
+                          return (
+                            <div
+                              onClick={() => {
+                                setNewIcon({
+                                  ...newIcon,
+                                  key: data?.key,
+                                  drawer: false,
+                                });
+                              }}
+                              key={index}
+                              className="flex items-center justify-center flex-col"
+                            >
+                              <div
+                                style={{ backgroundColor: iconData?.color }}
+                                className={`rounded-full p-2 w-max`}
+                              >
+                                <Icon size={30} />
+                              </div>
+                              <p className="capitalize">
+                                {data?.key?.split("-")[1] ?? data?.key}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </ScrollArea>
+                  </DrawerContent>
+                </Drawer>
               </div>
               {editChange ? (
-                <form>
-                  <div className="w-full grid gap-2">
-                    <Label>Description</Label>
-                    <Input name="description" placeholder="food" />
-                  </div>
-                </form>
+                <EditTransaction
+                  setEditChange={setEditChange}
+                  setDialog={setDialog}
+                  data={data}
+                  category={newIcon.key}
+                />
               ) : (
                 <TableTransaction
                   colorSeparator={colorSeparator}
@@ -182,7 +233,7 @@ export const TransactionShow = ({
   separator,
   colorSeparator,
 }: {
-  data: TransactionType;
+  data: TransactionType & { actionType?: string };
   separator: React.ReactNode;
   colorSeparator: string;
 }) => {
@@ -204,7 +255,9 @@ export const TransactionShow = ({
                 ? data?.description
                 : data?.category.split("-")[1]}
             </p>
-            {data?.userId === "goncang" && <Timer size={14} />}
+            {["new", "edit"].includes(String(data?.actionType)) && (
+              <Timer size={14} />
+            )}
           </div>
           <span
             className={`${colorSeparator} font-semibold flex items-center gap-1`}

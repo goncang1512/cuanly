@@ -80,6 +80,14 @@ enum TypeWallet {
   group
 }
 
+enum CateWallet {
+  default
+  debt
+  receivable
+  investment
+  asset
+}
+
 model Wallet {
   id            String      @id
   name          String
@@ -88,6 +96,7 @@ model Wallet {
   userId        String
   kategori      String
   user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category      CateWallet  @default(default)
 
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt

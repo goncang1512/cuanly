@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export type FormTypeTrans = {
   displayValue: string;
@@ -73,7 +74,7 @@ export default function FormAddMoney({
       {children}
       <DrawerContent className={`h-screen`}>
         <DialogTitle hidden>Add Money</DialogTitle>
-        <div className="mx-auto w-full max-w-md mt-2 flex flex-col gap-3">
+        <div className="mx-auto w-full max-w-md mt-2 md:px-0 px-3 flex flex-col gap-3">
           <Tabs defaultValue="formData">
             <TabsList className="w-full">
               <TabsTrigger value="formData">Form</TabsTrigger>
@@ -161,41 +162,38 @@ export default function FormAddMoney({
               </form>
             </TabsContent>
             <TabsContent value="category">
-              <div className="grid grid-cols-3 gap-3">
-                {icons?.map((data, index) => {
-                  const trans =
-                    typeTransaction === "add"
-                      ? "in-"
-                      : ["pay", "transfer"].includes(typeTransaction)
-                      ? "out-"
-                      : "";
-
-                  if (!data?.key?.startsWith(trans)) return null;
-                  const { Icon } = iconFn(data?.key);
-                  return (
-                    <button
-                      onClick={() =>
-                        setFormValue({ ...formValue, pickCategory: data?.key })
-                      }
-                      key={index}
-                      className="flex flex-col gap-1 items-center justify-center"
-                    >
-                      <div
-                        className={`${
-                          formValue.pickCategory === data?.key
-                            ? "bg-emerald"
-                            : "bg-neutral-200"
-                        }  p-2 size-10 rounded-full flex items-center justify-center`}
+              <ScrollArea className="pb-3 h-screen w-full">
+                <div className="grid grid-cols-3 w-full">
+                  {icons?.map((data, index) => {
+                    const { Icon } = iconFn(data?.key);
+                    return (
+                      <button
+                        onClick={() =>
+                          setFormValue({
+                            ...formValue,
+                            pickCategory: data?.key,
+                          })
+                        }
+                        key={index}
+                        className="flex flex-col gap-1 items-center justify-center"
                       >
-                        <Icon size={40} />
-                      </div>
-                      <p className="capitalize">
-                        {data?.key.split("-")[1] ?? data?.key}
-                      </p>
-                    </button>
-                  );
-                })}
-              </div>
+                        <div
+                          className={`${
+                            formValue.pickCategory === data?.key
+                              ? "bg-emerald"
+                              : "bg-neutral-200"
+                          }  p-2 size-10 rounded-full flex items-center justify-center`}
+                        >
+                          <Icon size={40} />
+                        </div>
+                        <p className="capitalize">
+                          {data?.key.split("-")[1] ?? data?.key}
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </ScrollArea>
             </TabsContent>
             <TabsWallet
               setWalletPick={setWalletPick}

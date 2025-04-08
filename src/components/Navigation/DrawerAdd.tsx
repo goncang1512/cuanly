@@ -141,7 +141,6 @@ export const TabsTransactionDraw = () => {
         <TabsContent value="income">
           <div className="grid grid-cols-3 gap-3">
             {icons.map((data, index) => {
-              if (!data?.key?.startsWith("in")) return null;
               const { Icon } = iconFn(data?.key);
               return (
                 <FormAddTrans
@@ -172,7 +171,6 @@ export const TabsTransactionDraw = () => {
         <TabsContent value="expand">
           <div className="grid grid-cols-3 gap-3">
             {icons.map((data, index) => {
-              if (!data?.key?.startsWith("out")) return null;
               const { Icon } = iconFn(data?.key);
               return (
                 <FormAddTrans

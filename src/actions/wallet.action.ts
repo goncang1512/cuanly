@@ -70,8 +70,9 @@ export const createWallet = async (
         id: generateWalletId(),
         name: formData.get("name") as string,
         type: formData.get("type") as $Enums.TypeWallet,
-        kategori: formData.get("kategori") as string,
+        kategori: formData.get("newicon") as string,
         userId: formData.get("user_id") as string,
+        category: formData.get("category") as $Enums.CateWallet,
       },
     });
 
@@ -83,6 +84,7 @@ export const createWallet = async (
       results: data,
     };
   } catch (error) {
+    console.error(error);
     if (error instanceof AppError) {
       return {
         status: false,

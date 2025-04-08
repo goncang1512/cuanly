@@ -60,9 +60,13 @@ export default async function WalletDetail({
           <div className="flex flex-col items-center w-max">
             <FormAddMoney typeTransaction="pay" wallet={walletNew ?? null}>
               <DrawerTrigger
-                disabled={Number(wallet?.results?.wallet?.balance) <= 0}
+                disabled={
+                  Number(wallet?.results?.wallet?.balance) <= 0 &&
+                  wallet?.results?.wallet?.category !== "receivable"
+                }
                 className={`${
-                  Number(wallet?.results?.wallet?.balance) > 0
+                  Number(wallet?.results?.wallet?.balance) > 0 ||
+                  wallet?.results?.wallet?.category === "receivable"
                     ? "bg-emerald text-white"
                     : "bg-neutral-200 text-neutral-400"
                 }    size-10 rounded-full flex items-center justify-center`}
