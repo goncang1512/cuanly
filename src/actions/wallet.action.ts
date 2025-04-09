@@ -6,7 +6,7 @@ import prisma from "@/lib/prisma";
 import { ApiResponse, WalletType } from "@/lib/types";
 import { $Enums } from "@prisma/client";
 import { generateId } from "better-auth";
-import { endOfDay, startOfDay } from "date-fns";
+import { endOfDay, endOfMonth, startOfDay, startOfMonth } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
@@ -14,41 +14,63 @@ export const getWallet = async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  const data = await prisma.wallet.findFirst({
-    where: {
-      userId: String(session?.user?.id),
-      name: "Dompet Utama",
-    },
+
+  const userId = String(session?.user?.id);
+  const now = new Date();
+
+  const wallet = await prisma.wallet.findFirst({
+    where: { userId, name: "Dompet Utama" },
   });
 
-  const todayStart = startOfDay(new Date());
-  const todayEnd = endOfDay(new Date());
-
-  const transaction = await prisma.transaction.findMany({
+  const todayTransactions = await prisma.transaction.findMany({
     where: {
-      userId: session?.user?.id,
+      userId,
       status: "aktif",
       createdAt: {
-        gte: todayStart,
-        lte: todayEnd,
+        gte: startOfDay(now),
+        lte: endOfDay(now),
       },
     },
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: { createdAt: "desc" },
     include: {
       wallet: true,
       fromWallet: true,
     },
   });
 
+  const monthTransactions = await prisma.transaction.findMany({
+    where: {
+      userId,
+      status: "aktif",
+      createdAt: {
+        gte: startOfMonth(now),
+        lte: endOfMonth(now),
+      },
+    },
+    select: {
+      type: true,
+      balance: true,
+    },
+  });
+
+  const { income, expand, transfer } = monthTransactions.reduce(
+    (acc, { type, balance }) => {
+      if (type === "add") acc.income += balance;
+      else if (type === "pay" || type === "transfer") acc.expand += balance;
+      else if (type === "move" || type === "adjust") acc.transfer += balance;
+      return acc;
+    },
+    { income: 0, expand: 0, transfer: 0 }
+  );
+
   return {
     status: true,
     statusCode: 200,
     message: "Success get wallet",
     results: {
-      wallet: data,
-      transaction,
+      wallet,
+      transaction: todayTransactions,
+      pieChart: { income, expand, transfer },
     },
   };
 };

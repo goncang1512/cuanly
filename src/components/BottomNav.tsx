@@ -48,7 +48,7 @@ function BottomNav() {
             <DrawerAdd />
           </CircleAdd>
           <LinkNav
-            inHref={pathname === "/grafik"}
+            inHref={pathname === "/charts"}
             icon={
               <svg
                 aria-hidden="true"
@@ -62,9 +62,9 @@ function BottomNav() {
                 <path d="M11 6.025a1 1 0 0 0-1.065-.998 8.5 8.5 0 1 0 9.038 9.039A1 1 0 0 0 17.975 13H11V6.025Z" />
               </svg>
             }
-            href="/grafik"
+            href="/charts"
           >
-            Grafik
+            Charts
           </LinkNav>
           <LinkNav
             inHref={pathname === "/profile"}
