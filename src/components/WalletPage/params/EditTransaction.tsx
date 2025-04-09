@@ -14,7 +14,13 @@ import { WalletContext } from "@/lib/context/WalletContext";
 import { useFormActionState } from "@/lib/customHook/useFormActionState";
 import { TransactionType } from "@/lib/types";
 import { $Enums } from "@prisma/client";
-import React, { Dispatch, SetStateAction, useContext, useEffect } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 export function EditTransaction({
   data,
@@ -136,3 +142,49 @@ export function EditTransaction({
     </form>
   );
 }
+
+export const DeleteTransaction = ({
+  setDialog,
+  formAction,
+  data,
+}: {
+  setDialog: Dispatch<SetStateAction<boolean>>;
+  formAction: (formData: FormData) => void;
+  data: TransactionType;
+}) => {
+  const { deleteTransaction: handleDelete } = useContext(WalletContext);
+  const [password, setPassword] = useState("");
+
+  return (
+    <form
+      className="flex-1 flex-col gap-2 flex items-center justify-center"
+      action={(formData) => {
+        setDialog(false);
+        handleDelete(formData, formAction, data?.id);
+      }}
+    >
+      <div className="grid gap-2 w-full">
+        <Label htmlFor="delete">
+          Input <span className="text-red-500">delete</span> for delete
+          transaction
+        </Label>
+        <Input
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          id="delete"
+          type="text"
+          name="password-delete"
+          placeholder="delete"
+        />
+      </div>
+
+      <Button
+        disabled={password !== "delete"}
+        type="submit"
+        className="bg-red-500 hover:bg-red-600 justify-center p-1 rounded-md flex items-center gap-2 w-full "
+      >
+        Delete
+      </Button>
+    </form>
+  );
+};

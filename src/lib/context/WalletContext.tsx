@@ -125,6 +125,12 @@ function WalletContextProvider({
     trans_id: string
   ) => {
     formData.append("trans_id", trans_id);
+    const password = formData.get("password-delete");
+    if (password !== "delete") {
+      toast("Invalid password", {
+        description: "correct the password",
+      });
+    }
 
     formAction(formData);
   };

@@ -5,6 +5,7 @@ import { generateId } from "better-auth";
 import { $Enums } from "@prisma/client";
 import { TransactionType } from "@/lib/types";
 import { revalidatePath } from "next/cache";
+import { AppError } from "@/lib/customHook/AppError";
 
 export const addMoneyWallet = async (
   prevState: unknown,
@@ -97,6 +98,12 @@ export const deleteTransaction = async (
   formData: FormData
 ) => {
   try {
+    const passwordDelete = formData.get("password-delete") as string;
+
+    if (passwordDelete !== "delete") {
+      throw new AppError("Invalid password", 422);
+    }
+
     const data = await prisma.transaction.delete({
       where: {
         id: formData.get("trans_id") as string,
@@ -111,7 +118,15 @@ export const deleteTransaction = async (
       reuslts: data,
     };
   } catch (error) {
-    console.error(error);
+    if (error instanceof AppError) {
+      return {
+        status: false,
+        statusCode: error.statusCode,
+        message: error.message,
+        results: null,
+      };
+    }
+
     return {
       status: false,
       statusCode: 500,

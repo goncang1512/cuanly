@@ -1,13 +1,12 @@
 "use client";
 import { deleteTransaction } from "@/actions/transaction.action";
-import { WalletContext } from "@/lib/context/WalletContext";
 import { useFormActionState } from "@/lib/customHook/useFormActionState";
 import { iconFn, icons } from "@/lib/dynamicIcon";
 import { formatDate } from "@/lib/time";
 import { TransactionType } from "@/lib/types";
 import { ArrowLeft, ArrowRight, RefreshCcw, Timer } from "lucide-react";
 import { useParams } from "next/navigation";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +18,10 @@ import { Table, TableBody, TableCell, TableRow } from "./ui/table";
 import { Button } from "./ui/button";
 import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 import { ScrollArea } from "./ui/scroll-area";
-import { EditTransaction } from "./WalletPage/params/EditTransaction";
+import {
+  DeleteTransaction,
+  EditTransaction,
+} from "./WalletPage/params/EditTransaction";
 
 export default function TransactionCard({
   data,
@@ -30,13 +32,13 @@ export default function TransactionCard({
   banyak?: number;
   index: number;
 }) {
-  const { deleteTransaction: handleDelete } = useContext(WalletContext);
   const [newIcon, setNewIcon] = useState({
     key: "",
     drawer: false,
   });
   const [dialog, setDialog] = useState(false);
   const [editChange, setEditChange] = useState(false);
+  const [onDelete, setOnDelete] = useState(false);
   const { formAction, isPending } = useFormActionState(deleteTransaction, null);
 
   if (isPending) {
@@ -149,6 +151,12 @@ export default function TransactionCard({
                   data={data}
                   category={newIcon.key}
                 />
+              ) : onDelete ? (
+                <DeleteTransaction
+                  setDialog={setDialog}
+                  formAction={formAction}
+                  data={data}
+                />
               ) : (
                 <TableTransaction
                   colorSeparator={colorSeparator}
@@ -158,29 +166,34 @@ export default function TransactionCard({
               )}
             </div>
             <div className="flex gap-2">
-              {!editChange && (
-                <form
-                  className="flex-1 flex items-center justify-center"
-                  action={(formData) => {
-                    setDialog(false);
-                    handleDelete(formData, formAction, data?.id);
-                  }}
-                >
+              {!editChange && !onDelete && (
+                <>
                   <Button
-                    type="submit"
-                    className=" justify-center p-1 rounded-md flex items-center gap-2 w-full "
+                    onClick={() => setOnDelete(true)}
+                    className="flex-1 justify-center p-1 rounded-md flex items-center gap-2 w-full"
                   >
                     Delete
                   </Button>
-                </form>
+                  <Button
+                    onClick={() => setEditChange(true)}
+                    className="flex-1 justify-center p-1 rounded-md flex items-center gap-2 w-full"
+                  >
+                    Edit
+                  </Button>
+                </>
               )}
-              <Button
-                type="button"
-                onClick={() => setEditChange(!editChange)}
-                className="flex-1   justify-center p-1 rounded-md flex items-center gap-2 w-full"
-              >
-                {editChange ? "Back" : "Edit"}
-              </Button>
+              {(editChange || onDelete) && (
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setEditChange(false);
+                    setOnDelete(false);
+                  }}
+                  className="flex-1 justify-center p-1 rounded-md flex items-center gap-2 w-full"
+                >
+                  Back
+                </Button>
+              )}
             </div>
           </DialogContent>
         </Dialog>
@@ -296,5 +309,3 @@ export const TransactionShow = ({
     </div>
   );
 };
-
-// none w-[27%]

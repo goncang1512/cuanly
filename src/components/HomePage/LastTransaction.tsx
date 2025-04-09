@@ -34,7 +34,7 @@ function LastTransaction({ transaction }: { transaction: TransactionType[] }) {
               </PopoverTrigger>
               <PopoverContent onClick={(e) => e.stopPropagation()}>
                 <p className="text-sm text-center">
-                  Displays the last 5 transactions from the previous day.
+                  Will only display transactions from one day ago.
                 </p>
               </PopoverContent>
             </Popover>

@@ -40,7 +40,6 @@ export const getWallet = async () => {
       wallet: true,
       fromWallet: true,
     },
-    take: 5,
   });
 
   return {
