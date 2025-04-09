@@ -221,7 +221,9 @@ const TableTransaction = ({
         </TableRow>
         <TableRow>
           <TableCell className="w-20 text-neutral-500">Description</TableCell>
-          <TableCell>{data?.description}</TableCell>
+          <TableCell className="whitespace-pre-wrap break-words">
+            {data?.description}
+          </TableCell>
         </TableRow>
       </TableBody>
     </Table>
@@ -250,10 +252,14 @@ export const TransactionShow = ({
         />
         <div>
           <div className="flex items-center gap-2">
-            <p className="text-sm capitalize truncate">
-              {data?.description !== ""
+            <p
+              className={`${
+                !data.description && "capitalize"
+              } text-sm max-md:truncate max-md:w-[20vh] text-start`}
+            >
+              {data?.description
                 ? data?.description
-                : data?.category.split("-")[1]}
+                : data?.category.split("-")[1] ?? data.category}
             </p>
             {["new", "edit"].includes(String(data?.actionType)) && (
               <Timer size={14} />
@@ -290,3 +296,5 @@ export const TransactionShow = ({
     </div>
   );
 };
+
+// none w-[27%]
