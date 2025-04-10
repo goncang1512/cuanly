@@ -53,7 +53,7 @@ export default function PieChart({
             }`}
             onClick={() => setMode("month")}
           >
-            Bulan
+            Month
           </button>
           <button
             className={`px-4 py-1 rounded ${
@@ -61,7 +61,7 @@ export default function PieChart({
             }`}
             onClick={() => setMode("year")}
           >
-            Tahun
+            Year
           </button>
         </div>
       )}
@@ -91,7 +91,7 @@ export default function PieChart({
             title: {
               display: true,
               text: `Transaction Pie Chart (${
-                mode === "month" ? "Bulan Ini" : "Tahun Ini"
+                mode === "month" ? "this month" : "this year"
               })`,
             },
             tooltip: {
@@ -143,10 +143,6 @@ export function PieChartMonth({ data }: { data: LabelType }) {
             title: {
               display: true,
               text: "Transaction Pie Chart (this month)",
-              font: {
-                size: 18,
-                weight: "bold",
-              },
             },
             tooltip: {
               callbacks: {

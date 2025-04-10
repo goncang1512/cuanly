@@ -110,6 +110,31 @@ export const deleteTransaction = async (
       },
     });
 
+    const wallet = await prisma.wallet.findFirst({
+      where: {
+        id: data?.walletId,
+      },
+      select: {
+        balance: true,
+      },
+    });
+
+    let newBalance: number = Number(wallet?.balance);
+    if (data.type === "add") {
+      newBalance -= data?.balance;
+    } else if (["pay", "transfer"].includes(data?.type)) {
+      newBalance += data?.balance;
+    }
+
+    await prisma.wallet.update({
+      where: {
+        id: data?.walletId,
+      },
+      data: {
+        balance: newBalance,
+      },
+    });
+
     revalidatePath(`/wallet/${data?.id}`);
     return {
       status: true,

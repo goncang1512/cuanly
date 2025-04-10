@@ -22,7 +22,8 @@ interface WalletInterface {
   deleteTransaction: (
     formData: FormData,
     formAction: (formData: FormData) => void,
-    trans_id: string
+    trans_id: string,
+    transaction: TransactionType
   ) => void;
   optimisticValue?: number;
   updateAmount: (action: string) => void;
@@ -91,7 +92,7 @@ function WalletContextProvider({
       return;
     }
 
-    let addMoney: number = 0;
+    let addMoney: number = Number(wallet?.balance);
     if (typeTransaction === "add") {
       addMoney += Number(formValue?.rawValue);
     } else {
@@ -122,7 +123,8 @@ function WalletContextProvider({
   const deleteTransaction = async (
     formData: FormData,
     formAction: (formData: FormData) => void,
-    trans_id: string
+    trans_id: string,
+    transaction: TransactionType
   ) => {
     formData.append("trans_id", trans_id);
     const password = formData.get("password-delete");
@@ -131,6 +133,14 @@ function WalletContextProvider({
         description: "correct the password",
       });
     }
+
+    let newBalance: number = Number(walletNew?.balance);
+    if (transaction.type === "add") {
+      newBalance -= Number(transaction.balance);
+    } else if (["pay", "transfer"].includes(transaction?.type)) {
+      newBalance += transaction?.balance;
+    }
+    updateAmount(newBalance);
 
     formAction(formData);
   };

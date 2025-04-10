@@ -59,7 +59,8 @@ export function TopDetail({ wallet }: { wallet: WalletType | null }) {
       id: generateId(32),
       description: "Amount adjustment",
       category: "adjest-balance",
-      balance: Number(formValue.rawAmount),
+      balance:
+        Number(formValue.rawAmount) === 0 ? 0 : -Number(formValue.rawAmount),
       type: "adjust",
       status: "aktif",
       userId: "goncang",

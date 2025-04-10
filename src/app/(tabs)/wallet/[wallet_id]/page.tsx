@@ -24,7 +24,7 @@ export default async function WalletDetail({
       walletNew={walletNew}
       transaction={wallet?.results?.transaction}
     >
-      <BarTop name={String(walletNew?.name)} />
+      <BarTop wallet={walletNew} />
       <div className="pt-14 h-full flex flex-col gap-3">
         <TopDetail wallet={walletNew ?? null} />
 

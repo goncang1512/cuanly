@@ -8,15 +8,16 @@ export default async function Home() {
   return (
     <div className="p-2">
       <TopBar />
-      <div className="pt-14 min-h-screen">
+      <div className="pt-14 min-h-screen flex flex-col gap-3">
         <CardWallet
           wallet={data?.results?.wallet}
           transaction={data?.results?.transaction}
         />
-        <div className="grid md:grid-cols-3 grid-cols-2 p-2 ">
+        <div className="flex">
           <div className="flex-1 shadow-sm border p-3 flex items-center justify-center rounded-md bg-white">
             <PieChartMonth data={data?.results?.pieChart} />
           </div>
+          <div className="flex-1 w-full h-full"></div>
         </div>
       </div>
     </div>

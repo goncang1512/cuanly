@@ -248,7 +248,10 @@ export const adjestAmount = async (prevState: unknown, formData: FormData) => {
         id: formData.get("wallet_id") as string,
       },
       data: {
-        balance: Number(formData.get("balance")),
+        balance:
+          Number(formData.get("balance")) === 0
+            ? 0
+            : -Number(formData.get("balance")),
       },
     });
 
@@ -314,6 +317,46 @@ export const getMyWalletTrans = async (
       statusCode: 500,
       message: "Internal Server Error",
       results: [],
+    };
+  }
+};
+
+export const updateWallet = async (prevState: unknown, formData: FormData) => {
+  try {
+    const data = await prisma.wallet.update({
+      where: {
+        id: formData.get("wallet_id") as string,
+      },
+      data: {
+        name: formData.get("name") as string,
+        category: formData.get("category") as $Enums.CateWallet,
+        kategori: formData.get("newicon") as string,
+        type: formData.get("type") as $Enums.TypeWallet,
+      },
+    });
+
+    revalidatePath(`/wallet/${data?.id}`);
+    return {
+      status: true,
+      statusCode: 200,
+      message: "Success update wallet",
+      results: data,
+    };
+  } catch (error) {
+    if (error instanceof AppError) {
+      return {
+        status: false,
+        statusCode: error.statusCode,
+        message: error.message,
+        results: null,
+      };
+    }
+
+    return {
+      status: false,
+      statusCode: 500,
+      message: "Internal Server Error",
+      results: null,
     };
   }
 };

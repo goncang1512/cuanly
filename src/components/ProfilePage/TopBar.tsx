@@ -1,5 +1,5 @@
 "use client";
-import { Bell, CircleUserRound, Wallet } from "lucide-react";
+import { Settings } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 export default function TopBar() {
@@ -53,24 +53,16 @@ export default function TopBar() {
     >
       <div className="md:w-3xl w-full flex items-center justify-between px-2">
         <div className="flex items-center gap-2">
-          <Wallet
-            size={!barScroll ? sizeIcon.icon : 23}
-            className="duration-200"
-          />
           <h1
             className="font-semibold duration-200"
             style={{ fontSize: !barScroll ? `${sizeIcon.font}px` : "16px" }}
           >
-            CuanLy
+            Profile
           </h1>
         </div>
 
         <div className="flex gap-2">
-          <CircleUserRound
-            size={!barScroll ? sizeIcon.icon : 23}
-            className="duration-200"
-          />
-          <Bell
+          <Settings
             size={!barScroll ? sizeIcon.icon : 23}
             className="duration-200"
           />

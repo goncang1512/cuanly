@@ -160,7 +160,7 @@ export const DeleteTransaction = ({
       className="flex-1 flex-col gap-2 flex items-center justify-center"
       action={(formData) => {
         setDialog(false);
-        handleDelete(formData, formAction, data?.id);
+        handleDelete(formData, formAction, data?.id, data);
       }}
     >
       <div className="grid gap-2 w-full">
