@@ -3,7 +3,8 @@ import { ApiResponse } from "../types";
 
 export function useFormActionState<FormValueType>(
   actionFn: (prevState: ApiResponse, payload: FormData) => Promise<ApiResponse>,
-  defaultValue: FormValueType
+  defaultValue: FormValueType,
+  onDefault: boolean = true
 ) {
   const [formValue, setFormValue] = useState<FormValueType>(defaultValue);
   const [message, setMessage] = useState<string | null>(null);
@@ -21,7 +22,7 @@ export function useFormActionState<FormValueType>(
 
   useEffect(() => {
     // reset hanya saat status success dan form submit sukses (bukan waktu user ngetik)
-    if (!isPending && state?.status) {
+    if (!isPending && state?.status && onDefault) {
       setFormValue(defaultValue);
     }
 

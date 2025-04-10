@@ -2,7 +2,7 @@
 import { Settings } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-export default function TopBar() {
+export default function ProfileTopBar() {
   const [barScroll, setBarScroll] = useState(false);
   const [sizeIcon, setSizeIcon] = useState({
     icon: 28,
@@ -57,7 +57,7 @@ export default function TopBar() {
             className="font-semibold duration-200"
             style={{ fontSize: !barScroll ? `${sizeIcon.font}px` : "16px" }}
           >
-            Profile
+            Others
           </h1>
         </div>
 

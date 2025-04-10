@@ -1,4 +1,7 @@
 import { $Enums } from "@prisma/client";
+import { auth } from "./auth";
+
+export type SessionUser = typeof auth.$Infer.Session.user;
 
 export type ApiResponse<T = unknown> = {
   status: boolean;

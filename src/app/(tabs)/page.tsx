@@ -13,7 +13,7 @@ export default async function Home() {
           wallet={data?.results?.wallet}
           transaction={data?.results?.transaction}
         />
-        <div className="flex">
+        <div className="flex md:flex-row flex-col">
           <div className="flex-1 shadow-sm border p-3 flex items-center justify-center rounded-md bg-white">
             <PieChartMonth data={data?.results?.pieChart} />
           </div>

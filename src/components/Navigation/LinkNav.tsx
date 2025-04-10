@@ -19,14 +19,14 @@ const LinkNav = ({
       <span
         className={`${
           inHref ? "text-emerald" : "text-gray-500 dark:text-gray-400"
-        } w-5 h-5 mb-2  group-hover:text-emerald`}
+        } w-5 h-5 mb-2  group-hover:text-emerald text-center `}
       >
         {icon}
       </span>
       <span
         className={`${
           inHref ? "text-emerald" : "text-gray-500 dark:text-gray-400"
-        } text-sm  group-hover:text-emerald`}
+        } text-sm  group-hover:text-emerald text-center `}
       >
         {children}
       </span>

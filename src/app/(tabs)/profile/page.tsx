@@ -1,57 +1,90 @@
 "use client";
-import TopBar from "@/components/ProfilePage/TopBar";
+import { getOneWallet } from "@/actions/wallet/profile.action";
+import ProfileTopBar from "@/components/ProfilePage/MyProfileTop";
+import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
-import { ChevronRight, LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
-import React from "react";
+import { SessionUser } from "@/lib/types";
+import { getSrc } from "@/lib/utils/getSrc";
+import { Check, Files } from "lucide-react";
+import React, {
+  startTransition,
+  useActionState,
+  useEffect,
+  useState,
+} from "react";
 
-export default function ProfilePage() {
-  const router = useRouter();
-  const session = authClient.useSession();
-  const user = session?.data?.user;
+export default function EditProfile() {
+  const dataSession = authClient.useSession();
+  const user = dataSession?.data?.user as SessionUser;
+  const [state, formAction, isPending] = useActionState(getOneWallet, null);
+  const [copied, setCopied] = useState(false);
 
-  const logout = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/auth?form=sign-in"); // redirect to login page
-        },
-      },
+  const src =
+    getSrc({
+      avatar: user?.avatar || "",
+      avatarId: user?.avatarId || "",
+      image: user?.image || "",
+    }) ?? "";
+
+  useEffect(() => {
+    if (!user) return;
+
+    const formData = new FormData();
+    formData.append("user_id", user?.id);
+    startTransition(() => {
+      formAction(formData);
+    });
+  }, [user]);
+
+  const handleCopy = (wallet_id: string) => {
+    if (!wallet_id) return;
+    navigator.clipboard.writeText(wallet_id).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500); // Reset setelah 1.5 detik
     });
   };
 
   return (
-    <div className="md:px-0 px-3 md:pt-5 pt-4">
-      <TopBar />
-      <div className="flex justify-between items-center pt-8">
-        <div className="flex items-center gap-3">
-          <img
-            src={String(
-              user?.image ??
-                "https://i.pinimg.com/736x/03/eb/d6/03ebd625cc0b9d636256ecc44c0ea324.jpg"
-            )}
-            className="size-16 border rounded-full"
-            alt=""
-          />
-          <div>
-            <h1 className="font-semibold text-xl">{user?.name}</h1>
-            <p className="text-sm text-neutral-400">{user?.email}</p>
+    <div className="flex flex-col gap-5 justify-center items-center py-5 md:px-0 px-4">
+      <div>
+        <ProfileTopBar user={user} />
+      </div>
+
+      <div className="flex flex-col justify-center items-center">
+        {src ? (
+          <img src={`${src}`} alt="" className="size-32 border rounded-full" />
+        ) : (
+          <Skeleton className="size-32 border rounded-full bg-neutral-200" />
+        )}
+        <h1 className="text-xl font-bold">{user?.name}</h1>
+        <p className="text-sm text-neutral-400">{user?.email}</p>
+        <p className="text-sm text-neutral-400">{user?.phonenumber}</p>
+      </div>
+
+      {isPending ? (
+        <Skeleton className="bg-green-500 rounded-md md:w-md w-full flex justify-between h-32" />
+      ) : (
+        <div className="bg-green-600 text-white p-4 rounded-md md:w-md w-full flex flex-col">
+          <div className="flex justify-between w-full">
+            <span>Main Wallet Number</span>{" "}
+            <div className="flex items-center gap-2">
+              <p className="font-semibold">
+                {state?.results?.id.match(/.{1,4}/g)?.join(" ")}
+              </p>
+              <button
+                disabled={copied}
+                onClick={() => handleCopy(String(state?.results?.id))}
+              >
+                {copied ? <Check size={20} /> : <Files size={20} />}
+              </button>
+            </div>
+          </div>
+          <div className="flex justify-between w-full">
+            <span>Balance</span>
+            <span>Rp{state?.results?.balance.toLocaleString("id-ID")}</span>
           </div>
         </div>
-        <div>
-          <ChevronRight />
-        </div>
-      </div>
-
-      {/* OTHER */}
-      <div className="pt-5">
-        <button onClick={logout} className="flex gap-3 items-center w-full">
-          <LogOut />
-          <p className="text-start border-b w-full pb-2">Logout</p>
-        </button>
-      </div>
-
-      <div className="h-[300vh]"></div>
+      )}
     </div>
   );
 }

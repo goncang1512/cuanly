@@ -18,6 +18,18 @@ export const auth = betterAuth({
         required: false,
         input: true,
       },
+      avatar: {
+        type: "string",
+        required: false,
+        defaultValue: "avatar.png",
+        input: true,
+      },
+      avatarId: {
+        type: "string",
+        defaultValue: "defualt",
+        required: false,
+        input: true,
+      },
     },
   },
 });

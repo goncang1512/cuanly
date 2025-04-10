@@ -59,8 +59,6 @@ export const BottomContextProvider = ({
   myWallet?: WalletType[] | null;
   loadingGet?: boolean;
 }) => {
-  console.log(myWallet);
-
   return (
     <BottomContext.Provider value={{ myWallet, loadingGet }}>
       {children}

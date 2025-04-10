@@ -1,5 +1,6 @@
 "use client";
 import { Bell, CircleUserRound, Wallet } from "lucide-react";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 export default function TopBar() {
@@ -66,10 +67,12 @@ export default function TopBar() {
         </div>
 
         <div className="flex gap-2">
-          <CircleUserRound
-            size={!barScroll ? sizeIcon.icon : 23}
-            className="duration-200"
-          />
+          <Link href={`/profile`}>
+            <CircleUserRound
+              size={!barScroll ? sizeIcon.icon : 23}
+              className="duration-200"
+            />
+          </Link>
           <Bell
             size={!barScroll ? sizeIcon.icon : 23}
             className="duration-200"
