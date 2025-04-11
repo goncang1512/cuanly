@@ -1,8 +1,8 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "../ui/drawer";
 import { useRouter, useSearchParams } from "next/navigation";
-import { X } from "lucide-react";
+import { CalendarIcon, X } from "lucide-react";
 import { PlanningContext } from "@/lib/context/PlanningContext";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
@@ -11,12 +11,40 @@ import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 import { SelectGroup, SelectValue } from "@radix-ui/react-select";
 import { iconFn, icons } from "@/lib/dynamicIcon";
+import { useFormActionState } from "@/lib/customHook/useFormActionState";
+import { createPlanning } from "@/actions/planning.action";
+import { Calendar } from "../ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+
+type FormCrateType = {
+  name: string;
+  description: string;
+  date: Date | undefined;
+  icon: string;
+  rawAmount: string;
+  amount: string;
+};
+
+const formCreatePlanning: FormCrateType = {
+  name: "",
+  description: "",
+  date: undefined,
+  icon: "",
+  rawAmount: "",
+  amount: "",
+};
 
 export default function CreatePlan() {
   const query = useSearchParams();
   const router = useRouter();
   const action = query.get("action");
   const { seeDrawerCreate, setDrawerCreate } = useContext(PlanningContext);
+  const { setFormValue, formValue, formAction } = useFormActionState(
+    createPlanning,
+    formCreatePlanning
+  );
 
   useEffect(() => {
     if (action === "create") {
@@ -30,16 +58,28 @@ export default function CreatePlan() {
     router.replace(newUrl);
   };
 
-  const [selected, setSelected] = useState<string | null>(null);
-  const { Icon } = selected ? iconFn(selected) : { Icon: null };
-  const selectedLabel = selected?.split("-")[1] ?? selected;
+  const { Icon } = formValue.icon ? iconFn(formValue.icon) : { Icon: null };
+  const selectedLabel = formValue.icon?.split("-")[1] ?? formValue.icon;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const numeric = e.target.value.replace(/\D/g, "");
+
+    setFormValue({
+      ...formValue,
+      amount: numeric ? Number(numeric).toLocaleString("id-ID") : "",
+      rawAmount: numeric,
+    });
+  };
 
   return (
     <div>
       <Drawer
         open={seeDrawerCreate}
         onOpenChange={setDrawerCreate}
-        onClose={handleClose}
+        onClose={() => {
+          handleClose();
+          setFormValue(formCreatePlanning);
+        }}
       >
         <DrawerContent
           aria-describedby="drawer-create-planning"
@@ -58,15 +98,32 @@ export default function CreatePlan() {
             </DrawerTitle>
           </DrawerHeader>
           <div className="mx-auto w-full max-w-sm h-[50vh]">
-            <form className="grid gap-3">
+            <form
+              action={(formData) => {
+                formData.append("amount", formValue.rawAmount);
+                formData.append("date", String(formValue.date));
+                formAction(formData);
+              }}
+              className="grid gap-3"
+            >
               <div className="grid gap-2">
                 <Label htmlFor="name">Name</Label>
-                <Input name="name" id="name" placeholder="Listrik" />
+                <Input
+                  value={formValue.name}
+                  onChange={(e) =>
+                    setFormValue({ ...formValue, name: e.target.value })
+                  }
+                  name="name"
+                  id="name"
+                  placeholder="Listrik"
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="jumlah">Amount</Label>
                 <div className="relative flex-1">
                   <Input
+                    value={formValue.amount}
+                    onChange={handleChange}
                     id="jumlah"
                     accept="numeric"
                     name="jumlah"
@@ -80,9 +137,14 @@ export default function CreatePlan() {
                   </span>
                 </div>
               </div>
-              <div>
+              <div className="grid gap-2">
                 <Label htmlFor="icon">Icon</Label>
-                <Select onValueChange={(value) => setSelected(value)}>
+                <Select
+                  name="newIcon"
+                  onValueChange={(value) =>
+                    setFormValue({ ...formValue, icon: value })
+                  }
+                >
                   <SelectTrigger className="w-full">
                     {Icon ? (
                       <div className="flex items-center gap-2">
@@ -113,9 +175,41 @@ export default function CreatePlan() {
                   </SelectContent>
                 </Select>
               </div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal ",
+                      !formValue.date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formValue.date ? (
+                      format(formValue.date, "PPP")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={formValue.date}
+                    onSelect={(value) =>
+                      setFormValue({ ...formValue, date: value })
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
                 <Textarea
+                  value={formValue.description}
+                  onChange={(e) =>
+                    setFormValue({ ...formValue, description: e.target.value })
+                  }
                   name="description"
                   id="description"
                   className="min-h-32"
