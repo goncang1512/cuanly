@@ -1,5 +1,5 @@
 "use client";
-import TopBar from "@/components/ProfilePage/TopBar";
+import TopBar from "@/components/TopBar";
 import { authClient } from "@/lib/auth-client";
 import { getSrc } from "@/lib/utils/getSrc";
 import { ChevronRight, LogOut } from "lucide-react";
@@ -30,7 +30,7 @@ export default function OtherPage() {
 
   return (
     <div className="md:px-0 px-3 md:pt-5 pt-4">
-      <TopBar />
+      <TopBar title="Others" iconName="Settings" />
       <div className="flex justify-between items-center pt-8">
         <div className="flex items-center gap-3">
           {src ? (

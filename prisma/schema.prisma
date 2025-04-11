@@ -31,6 +31,7 @@ model User {
   avatarId    String     @default("default")
 
   @@map("user")
+  Planning Planning[]
 }
 
 model Session {
@@ -142,4 +143,21 @@ model Transaction {
   updatedAt DateTime @updatedAt
 
   @@map("transaction")
+}
+
+model Planning {
+  id            String          @id       @default(dbgenerated())
+  name          String
+  description   String
+  price         Float
+  deadline      DateTime
+  icon          String
+  userId        String
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("planning")
 }
