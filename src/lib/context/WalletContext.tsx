@@ -1,5 +1,11 @@
 "use client";
-import React, { createContext, useOptimistic } from "react";
+import React, {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useOptimistic,
+  useState,
+} from "react";
 import { TransactionType, WalletType } from "../types";
 import { generateId } from "better-auth";
 import { FormTypeTrans } from "@/components/WalletPage/params/FormAddMoney";
@@ -27,6 +33,8 @@ interface WalletInterface {
   ) => void;
   optimisticValue?: number;
   updateAmount: (action: string) => void;
+  setFilteredTrans: Dispatch<SetStateAction<TransactionType[] | null>>;
+  filteredTrans: TransactionType[] | null;
 }
 
 export const WalletContext = createContext({} as WalletInterface);
@@ -41,6 +49,9 @@ function WalletContextProvider({
   walletNew?: WalletType | null;
 }) {
   const session = authClient.useSession();
+  const [filteredTrans, setFilteredTrans] = useState<TransactionType[] | null>(
+    null
+  );
   const [optimisticTrans, addOptimisticTrans] = useOptimistic(
     transaction ?? [],
     (state, newTransaction: TransactionType & { actionType?: string }) => {
@@ -49,6 +60,7 @@ function WalletContextProvider({
           t.id === newTransaction.id ? { ...t, ...newTransaction } : t
         );
       }
+
       return [newTransaction, ...state];
     }
   );
@@ -155,6 +167,8 @@ function WalletContextProvider({
         deleteTransaction,
         optimisticValue,
         updateAmount,
+        filteredTrans,
+        setFilteredTrans,
       }}
     >
       {children}

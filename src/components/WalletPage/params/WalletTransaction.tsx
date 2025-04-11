@@ -5,10 +5,12 @@ import { TransactionType } from "@/lib/types";
 import React, { useContext } from "react";
 
 export default function WalletTransaction() {
-  const { optimisticTrans, transaction } = useContext(WalletContext);
+  const { optimisticTrans, transaction, filteredTrans } =
+    useContext(WalletContext);
+  const dataToShow = filteredTrans ?? optimisticTrans;
   return (
     <div>
-      {optimisticTrans?.map((data: TransactionType, index: number) => {
+      {dataToShow?.map((data: TransactionType, index: number) => {
         return (
           <TransactionCard
             data={data}
