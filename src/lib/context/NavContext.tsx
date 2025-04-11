@@ -11,8 +11,8 @@ export const NavContext = createContext(
   {} as {
     seeDrawerOne: boolean;
     setSeeDrawerOne: Dispatch<SetStateAction<boolean>>;
-    seeDrawerTwo: boolean;
-    setSeeDrawerTwo: Dispatch<SetStateAction<boolean>>;
+    seeDrawerTwo: { show: boolean; type: string };
+    setSeeDrawerTwo: Dispatch<SetStateAction<{ show: boolean; type: string }>>;
     seeDrawerThree: boolean;
     setSeeDrawerThree: Dispatch<SetStateAction<boolean>>;
   }
@@ -24,7 +24,13 @@ export default function NavContextProvider({
   children: React.ReactNode;
 }) {
   const [seeDrawerOne, setSeeDrawerOne] = useState(false);
-  const [seeDrawerTwo, setSeeDrawerTwo] = useState(false);
+  const [seeDrawerTwo, setSeeDrawerTwo] = useState<{
+    show: boolean;
+    type: string;
+  }>({
+    show: false,
+    type: "",
+  });
   const [seeDrawerThree, setSeeDrawerThree] = useState(false);
 
   return (

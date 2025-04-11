@@ -31,7 +31,10 @@ function DrawerAdd() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setSeeDrawerOne(false);
-        setSeeDrawerTwo(false);
+        setSeeDrawerTwo({
+          show: false,
+          type: "",
+        });
       }
     };
 
@@ -113,6 +116,7 @@ function DrawerAdd() {
 
 export const TabsTransactionDraw = () => {
   const [pickCategory, setPickCategory] = useState("");
+  const { setSeeDrawerTwo, seeDrawerTwo } = useContext(NavContext);
   return (
     <Tabs defaultValue="income">
       <div className="bg-emerald w-full flex py-4 justify-center">
@@ -143,27 +147,31 @@ export const TabsTransactionDraw = () => {
             {icons.map((data, index) => {
               const { Icon } = iconFn(data?.key);
               return (
-                <FormAddTrans
-                  typeTrans="add"
-                  setPickCategory={setPickCategory}
-                  category={data?.key}
+                <div
                   key={index}
+                  onClick={() => {
+                    setPickCategory(data?.key);
+                    setSeeDrawerTwo({
+                      ...seeDrawerTwo,
+                      show: true,
+                      type: "add",
+                    });
+                  }}
+                  className="flex flex-col gap-1 items-center justify-center cursor-pointer"
                 >
-                  <div className="flex flex-col gap-1 items-center justify-center">
-                    <div
-                      className={`${
-                        pickCategory === data?.key
-                          ? "bg-emerald"
-                          : "bg-neutral-200"
-                      } p-2 size-10  rounded-full flex items-center justify-center`}
-                    >
-                      <Icon size={40} />
-                    </div>
-                    <p className="capitalize">
-                      {data?.key.split("-")[1] ?? data?.key}
-                    </p>
+                  <div
+                    className={`${
+                      pickCategory === data?.key
+                        ? "bg-emerald"
+                        : "bg-neutral-200"
+                    } p-2 size-10  rounded-full flex items-center justify-center`}
+                  >
+                    <Icon size={40} />
                   </div>
-                </FormAddTrans>
+                  <p className="capitalize">
+                    {data?.key.split("-")[1] ?? data?.key}
+                  </p>
+                </div>
               );
             })}
           </div>
@@ -173,30 +181,27 @@ export const TabsTransactionDraw = () => {
             {icons.map((data, index) => {
               const { Icon } = iconFn(data?.key);
               return (
-                <FormAddTrans
-                  typeTrans="pay"
-                  setPickCategory={setPickCategory}
-                  category={data?.key}
+                <div
+                  onClick={() => {
+                    setPickCategory(data?.key);
+                    setSeeDrawerTwo({ show: true, type: "pay" });
+                  }}
                   key={index}
+                  className="flex flex-col gap-1 items-center justify-center cursor-pointer"
                 >
                   <div
-                    key={index}
-                    className="flex flex-col gap-1 items-center justify-center"
+                    className={`${
+                      pickCategory === data?.key
+                        ? "bg-emerald"
+                        : "bg-neutral-200"
+                    } p-2 size-10  rounded-full flex items-center justify-center`}
                   >
-                    <div
-                      className={`${
-                        pickCategory === data?.key
-                          ? "bg-emerald"
-                          : "bg-neutral-200"
-                      } p-2 size-10  rounded-full flex items-center justify-center`}
-                    >
-                      <Icon size={40} />
-                    </div>
-                    <p className="capitalize">
-                      {data?.key.split("-")[1] ?? data?.key}
-                    </p>
+                    <Icon size={40} />
                   </div>
-                </FormAddTrans>
+                  <p className="capitalize">
+                    {data?.key.split("-")[1] ?? data?.key}
+                  </p>
+                </div>
               );
             })}
           </div>
@@ -205,6 +210,11 @@ export const TabsTransactionDraw = () => {
           <TransMoney />
         </TabsContent>
       </div>
+      <FormAddTrans
+        typeTrans={seeDrawerTwo.type}
+        setPickCategory={setPickCategory}
+        category={pickCategory}
+      />
     </Tabs>
   );
 };

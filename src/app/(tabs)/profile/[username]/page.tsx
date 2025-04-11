@@ -123,7 +123,6 @@ export default function EditProfile() {
           name="phone-number"
           placeholder="+628123353122"
           type="text"
-          required
         >
           Phone number
         </InputEdit>

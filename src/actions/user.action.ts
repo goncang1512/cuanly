@@ -4,8 +4,11 @@ import { AppError } from "@/lib/customHook/AppError";
 import { generateWalletId } from "@/lib/generateId";
 import prisma from "@/lib/prisma";
 import { ApiResponse, UserType } from "@/lib/types";
+import cloudinary from "@/lib/utils/cloudinary";
 import { APIError } from "better-call";
+import { UploadApiResponse } from "cloudinary";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 export const registerUser = async (
   prevState: unknown,
@@ -58,7 +61,38 @@ export const updateUserProfile = async (
   prevState: unknown,
   formData: FormData
 ) => {
+  const formImage = formData.get("foto-profile") as File;
   try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+    let result: UploadApiResponse | undefined;
+    if (formImage) {
+      const fileBuffer = await formImage.arrayBuffer();
+      const image = new Uint8Array(fileBuffer);
+      result = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream(
+            {
+              folder: "/mogo-app/foto-profile",
+            },
+            (error, result) => {
+              if (error) {
+                reject(error);
+                return;
+              }
+
+              resolve(result);
+            }
+          )
+          .end(image);
+      });
+    }
+
+    if (session?.user?.avatarId !== "default") {
+      await cloudinary.uploader.destroy(String(session?.user?.avatarId));
+    }
+
     const data = await prisma.user.update({
       where: {
         id: formData.get("user_id") as string,
@@ -67,6 +101,8 @@ export const updateUserProfile = async (
         name: formData.get("name") as string,
         email: formData.get("email") as string,
         phonenumber: formData.get("phone-number") as string,
+        avatar: result?.secure_url ?? String(session?.user?.avatar),
+        avatarId: result?.public_id ?? String(session?.user?.avatarId),
       },
     });
 

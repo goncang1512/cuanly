@@ -52,7 +52,11 @@ export default function EditProfile() {
 
       <div className="flex flex-col justify-center items-center">
         {src ? (
-          <img src={`${src}`} alt="" className="size-32 border rounded-full" />
+          <img
+            src={`${src}`}
+            alt=""
+            className="size-32 border rounded-full object-cover"
+          />
         ) : (
           <Skeleton className="size-32 border rounded-full bg-neutral-200" />
         )}

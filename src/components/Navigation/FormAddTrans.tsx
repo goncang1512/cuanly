@@ -26,12 +26,10 @@ import { toast } from "sonner";
 
 export default function FormAddTrans({
   category,
-  children,
   typeTrans,
   setPickCategory,
 }: {
   category: string;
-  children: React.ReactNode;
   typeTrans: string;
   setPickCategory: Dispatch<SetStateAction<string>>;
 }) {
@@ -87,7 +85,7 @@ export default function FormAddTrans({
 
   useEffect(() => {
     if (state.status) {
-      setSeeDrawerTwo(false);
+      setSeeDrawerTwo({ show: false, type: "" });
       setSeeDrawerOne(false);
     }
   }, [state]);
@@ -98,15 +96,11 @@ export default function FormAddTrans({
         setPickCategory("");
         setPickWallet(undefined);
       }}
-      onOpenChange={setSeeDrawerTwo}
-      open={seeDrawerTwo}
+      onOpenChange={(open) =>
+        setSeeDrawerTwo({ ...seeDrawerTwo, show: open, type: typeTrans })
+      }
+      open={seeDrawerTwo.show && typeTrans === seeDrawerTwo?.type}
     >
-      <DrawerTrigger
-        onClick={() => setPickCategory(category)}
-        className="flex items-center justify-center"
-      >
-        {children}
-      </DrawerTrigger>
       <DrawerContent
         aria-describedby="drawer-two"
         classLay="bg-transparent"
