@@ -13,15 +13,16 @@ import { SelectGroup, SelectValue } from "@radix-ui/react-select";
 import { iconFn, icons } from "@/lib/dynamicIcon";
 import { useFormActionState } from "@/lib/customHook/useFormActionState";
 import { createPlanning } from "@/actions/planning.action";
-import { Calendar } from "../ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import DatePicker from "react-datepicker";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import "react-datepicker/dist/react-datepicker.css";
 
 type FormCrateType = {
   name: string;
   description: string;
-  date: Date | undefined;
+  date: Date | null;
   icon: string;
   rawAmount: string;
   amount: string;
@@ -30,7 +31,7 @@ type FormCrateType = {
 const formCreatePlanning: FormCrateType = {
   name: "",
   description: "",
-  date: undefined,
+  date: null,
   icon: "",
   rawAmount: "",
   amount: "",
@@ -193,13 +194,11 @@ export default function CreatePlan() {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
+                  <DatePicker
                     selected={formValue.date}
                     onSelect={(value) =>
                       setFormValue({ ...formValue, date: value })
                     }
-                    initialFocus
                   />
                 </PopoverContent>
               </Popover>
