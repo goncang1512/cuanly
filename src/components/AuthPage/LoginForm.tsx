@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { LoaderCircle } from "lucide-react";
 import InputPassword from "../fragments/InputPassword";
+import SocialAuth from "./SocialAuth";
 
 function LoginForm() {
   const router = useRouter();
@@ -52,6 +53,7 @@ function LoginForm() {
         </CardHeader>
         <CardContent>
           <div className="grid w-full items-center gap-4">
+            <SocialAuth />
             <div className="grid w-full items-center gap-1.5">
               <Label htmlFor="email">Email</Label>
               <Input type="email" id="email" name="email" placeholder="Email" />

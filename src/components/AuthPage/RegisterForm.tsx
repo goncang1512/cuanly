@@ -15,6 +15,7 @@ import InputPassword from "../fragments/InputPassword";
 import { LoaderCircle } from "lucide-react";
 import { registerUser } from "@/actions/user.action";
 import { useActionState, useEffect, useState } from "react";
+import SocialAuth from "./SocialAuth";
 
 function RegisterForm() {
   const router = useRouter();
@@ -44,6 +45,8 @@ function RegisterForm() {
         </CardHeader>
         <CardContent>
           <div className="grid w-full items-center gap-4">
+            <SocialAuth />
+
             <div className="grid w-full items-center gap-1.5">
               <Label htmlFor="name">Name</Label>
               <Input type="text" id="name" name="name" placeholder="Name" />
