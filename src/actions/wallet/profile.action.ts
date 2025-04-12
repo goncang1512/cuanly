@@ -4,8 +4,6 @@ import prisma from "@/lib/prisma";
 
 export const getOneWallet = async (prevState: unknown, formData: FormData) => {
   try {
-    // await new Promise((resolve) => setTimeout(resolve, 20000));
-
     const data = await prisma.wallet.findFirst({
       where: {
         userId: formData.get("user_id") as string,
