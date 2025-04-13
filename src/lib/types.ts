@@ -24,15 +24,7 @@ export type WalletType = {
   moveTransaction?: TransactionType[] | null;
 };
 
-export type UserType = {
-  id: string;
-  email: string;
-  name: string;
-  image: string | null | undefined;
-  emailVerified: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-};
+export type UserType = SessionUser;
 
 export type TransactionType = {
   id: string;
@@ -49,4 +41,18 @@ export type TransactionType = {
   user?: UserType | null;
   wallet?: WalletType | null;
   fromWallet?: WalletType | null;
+};
+
+export type TPlanning = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  deadline: Date;
+  icon: string;
+  userId: string;
+  recurrenceType: $Enums.RecurenceT;
+  createdAt: Date;
+  updatedAt: Date;
+  user?: UserType;
 };

@@ -52,6 +52,7 @@ export function TopDetail({ wallet }: { wallet: WalletType | null }) {
   const handleUpdateAmount = (formData: FormData) => {
     formData.append("wallet_id", String(wallet?.id));
     formData.append("balance", String(formValue.rawAmount));
+    formData.append("category", String(wallet?.category));
 
     updateAmount(formValue.rawAmount);
 

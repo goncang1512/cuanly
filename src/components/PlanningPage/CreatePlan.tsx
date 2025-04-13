@@ -18,6 +18,9 @@ import DatePicker from "react-datepicker";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import "react-datepicker/dist/react-datepicker.css";
+import { authClient } from "@/lib/auth-client";
+import { generateId } from "better-auth";
+import { $Enums } from "@prisma/client";
 
 type FormCrateType = {
   name: string;
@@ -26,6 +29,7 @@ type FormCrateType = {
   icon: string;
   rawAmount: string;
   amount: string;
+  recurrence: string;
 };
 
 const formCreatePlanning: FormCrateType = {
@@ -35,14 +39,17 @@ const formCreatePlanning: FormCrateType = {
   icon: "",
   rawAmount: "",
   amount: "",
+  recurrence: "",
 };
 
 export default function CreatePlan() {
   const query = useSearchParams();
   const router = useRouter();
   const action = query.get("action");
-  const { seeDrawerCreate, setDrawerCreate } = useContext(PlanningContext);
-  const { setFormValue, formValue, formAction } = useFormActionState(
+  const session = authClient.useSession();
+  const { seeDrawerCreate, setDrawerCreate, addPlanning } =
+    useContext(PlanningContext);
+  const { setFormValue, formValue, formAction, isPending } = useFormActionState(
     createPlanning,
     formCreatePlanning
   );
@@ -72,6 +79,33 @@ export default function CreatePlan() {
     });
   };
 
+  useEffect(() => {
+    if (isPending) {
+      setDrawerCreate(false);
+    }
+  }, [isPending]);
+
+  const handleCreatePlanning = (formData: FormData) => {
+    formData.append("amount", formValue.rawAmount);
+    formData.append("date", String(formValue.date));
+    formData.append("user_id", String(session?.data?.user?.id));
+
+    addPlanning({
+      id: generateId(32),
+      name: formValue.name,
+      description: formValue.description,
+      price: Number(formValue.rawAmount),
+      deadline: new Date(String(formValue.date)),
+      icon: formValue.icon,
+      userId: String(session?.data?.user?.id),
+      recurrenceType: formValue.recurrence as $Enums.RecurenceT,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    formAction(formData);
+  };
+
   return (
     <div>
       <Drawer
@@ -99,14 +133,7 @@ export default function CreatePlan() {
             </DrawerTitle>
           </DrawerHeader>
           <div className="mx-auto w-full max-w-sm h-[50vh]">
-            <form
-              action={(formData) => {
-                formData.append("amount", formValue.rawAmount);
-                formData.append("date", String(formValue.date));
-                formAction(formData);
-              }}
-              className="grid gap-3"
-            >
+            <form action={handleCreatePlanning} className="grid gap-3">
               <div className="grid gap-2">
                 <Label htmlFor="name">Name</Label>
                 <Input
@@ -137,6 +164,46 @@ export default function CreatePlan() {
                     Rp
                   </span>
                 </div>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="recurrence">Recurrence</Label>
+                <Select
+                  name="recurrence"
+                  onValueChange={(value) =>
+                    setFormValue({ ...formValue, recurrence: value })
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    {formValue.recurrence !== "" ? (
+                      <div className="flex items-center gap-2">
+                        <span className="capitalize">
+                          {formValue.recurrence}
+                        </span>
+                      </div>
+                    ) : (
+                      <SelectValue placeholder="When will it be repeated" />
+                    )}
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectGroup className="grid gap-2">
+                      {["monthly", "weekly", "yearly", "ontime"].map(
+                        (data, index) => {
+                          return (
+                            <SelectItem
+                              showCheck={false}
+                              value={data}
+                              className="text-start capitalize"
+                              key={index}
+                            >
+                              {data}
+                            </SelectItem>
+                          );
+                        }
+                      )}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="icon">Icon</Label>
@@ -176,32 +243,35 @@ export default function CreatePlan() {
                   </SelectContent>
                 </Select>
               </div>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-full justify-start text-left font-normal ",
-                      !formValue.date && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formValue.date ? (
-                      format(formValue.date, "PPP")
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <DatePicker
-                    selected={formValue.date}
-                    onSelect={(value) =>
-                      setFormValue({ ...formValue, date: value })
-                    }
-                  />
-                </PopoverContent>
-              </Popover>
+              <div className="grid gap-2">
+                <Label>Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start text-left font-normal ",
+                        !formValue.date && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formValue.date ? (
+                        format(formValue.date, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <DatePicker
+                      selected={formValue.date}
+                      onSelect={(value) =>
+                        setFormValue({ ...formValue, date: value })
+                      }
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
                 <Textarea

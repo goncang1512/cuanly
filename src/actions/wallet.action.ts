@@ -243,15 +243,19 @@ export const getMyWallet = async (prevState: unknown, formData: FormData) => {
 
 export const adjestAmount = async (prevState: unknown, formData: FormData) => {
   try {
+    const category = formData.get("category") as $Enums.CateWallet;
+    const balanceInput = Number(formData.get("balance"));
+    const isDebt = category === "receivable";
+
+    const adjustedBalance =
+      balanceInput === 0 ? 0 : isDebt ? -Math.abs(balanceInput) : balanceInput;
+
     const data = await prisma.wallet.update({
       where: {
         id: formData.get("wallet_id") as string,
       },
       data: {
-        balance:
-          Number(formData.get("balance")) === 0
-            ? 0
-            : -Number(formData.get("balance")),
+        balance: adjustedBalance,
       },
     });
 
