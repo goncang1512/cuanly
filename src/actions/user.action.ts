@@ -36,7 +36,7 @@ export const registerUser = async (
       status: true,
       statusCode: 201,
       message: "Success create user",
-      results: data?.user,
+      results: data.user as UserType,
     };
   } catch (error) {
     if (error instanceof APIError) {
