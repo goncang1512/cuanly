@@ -79,6 +79,8 @@ export const getWalletMember = async (wallet_id: string) => {
           select: {
             name: true,
             id: true,
+            toLedger: true,
+            fromLedger: true,
           },
         },
       },
