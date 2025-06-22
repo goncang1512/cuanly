@@ -33,9 +33,12 @@ model User {
   Planning        Planning[]
   username        String?
   displayUsername String?
+  member Member[]
 
   @@map("user")
   @@unique([username])
+  toLedger ledger[] @relation("toUser")
+  fromLedger ledger[] @relation("fromUser")
 }
 
 model Session {
@@ -110,6 +113,7 @@ model Wallet {
   updatedAt       DateTime      @updatedAt
   transaction     Transaction[]
   moveTransaction Transaction[] @relation(name: "MoveTransaction")
+  member Member[]
 
   @@map("wallet")
 }
@@ -172,4 +176,33 @@ model Planning {
   user                  User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("planning")
+}
+
+model Member {
+  id String @id @default(dbgenerated())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  walletId  String
+  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("member")
+}
+
+enum StatusLedger {
+  paid
+  unpaid
+}
+
+model ledger {
+  id  String @id @default(dbgenerated())
+  fromId  String
+  from  User @relation("fromUser", fields: [fromId], references: [id], onDelete: Cascade)
+  toId  String
+  to User @relation("toUser", fields: [toId], references: [id], onDelete: Cascade)
+  amount Int
+  status StatusLedger @default(unpaid)
+
+  @@map("ledger")
 }

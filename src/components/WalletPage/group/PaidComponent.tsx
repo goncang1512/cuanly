@@ -1,0 +1,202 @@
+"use client";
+
+import { createLedger } from "@/actions/ledger.action";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { authClient } from "@/lib/auth-client";
+import { useFormActionState } from "@/lib/customHook/useFormActionState";
+import { Loader2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+
+interface UserProps {
+  id: string;
+  name: string | null;
+}
+
+const formLedger = {
+  utang: "",
+  displayValue: "",
+  rawValue: 0,
+};
+
+export default function PaidComponent({ users }: { users: UserProps[] }) {
+  const [piutang, setPiutang] = useState("");
+  const { formValue, state, setFormValue, formAction, isPending } =
+    useFormActionState(createLedger, formLedger);
+  const session = authClient.useSession();
+  const userId = String(session?.data?.user?.id ?? "");
+  const [openItem, setOpenItem] = useState<string | null>(null);
+
+  const [tabs, setTabs] = useState<"piutang" | "utang">("piutang");
+
+  useEffect(() => {
+    if (!userId) return;
+
+    if (tabs === "piutang") {
+      setPiutang(userId);
+    } else {
+      setFormValue({ ...formValue, utang: userId });
+    }
+  }, [tabs, userId]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\./g, "");
+    const numeric = raw.replace(/[^0-9]/g, "");
+    const value = Number(numeric);
+
+    console.log({ value, numeric, raw });
+
+    setFormValue({
+      ...formValue,
+      displayValue: numeric ? value.toLocaleString("id-ID") : "",
+      rawValue: value,
+    });
+  };
+
+  useEffect(() => {
+    if (state.status === true) {
+      setOpenItem("item-2");
+    }
+  }, [state.status, isPending]);
+
+  return (
+    <div className="pt-5">
+      <Accordion
+        value={openItem ?? undefined}
+        onValueChange={(value) => setOpenItem(value)}
+        type="single"
+        collapsible
+      >
+        <AccordionItem value="item-1">
+          <AccordionTrigger
+            aria-expanded="true"
+            classIcon="hidden"
+            className="h-content w-content hover:no-underline flex-0 bg-green-400 px-3 py-1"
+          >
+            Paid
+          </AccordionTrigger>
+          <AccordionContent className="p-3">
+            <h1 className="text-center font-medium text-base pb-3">Paid</h1>
+
+            <Tabs
+              value={tabs}
+              onValueChange={(val) => {
+                setTabs(val as "piutang" | "utang");
+                if (val === "piutang") {
+                  setFormValue({ ...formValue, utang: "" });
+                } else {
+                  setPiutang("");
+                }
+              }}
+            >
+              <TabsList className="grid grid-cols-2 w-full gap-2">
+                <TabsTrigger
+                  value="piutang"
+                  className="data-[state=active]:bg-emerald hover:bg-emerald-500 duration-200"
+                >
+                  Piutang
+                </TabsTrigger>
+                <TabsTrigger
+                  value="utang"
+                  className="data-[state=active]:bg-emerald hover:bg-emerald-500 duration-200"
+                >
+                  Utang
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+
+            <form
+              action={(formData) => {
+                formData.append("amount", String(formValue.rawValue));
+                formData.append("piutang", piutang);
+                formData.append("utang", formValue.utang);
+                formAction(formData);
+              }}
+              className="grid gap-2"
+            >
+              <div className="flex gap-2 pt-5">
+                <div className="grid gap-2 w-full">
+                  <Label>Piutang</Label>
+                  <Select
+                    name="piutang"
+                    value={piutang}
+                    onValueChange={(val) => setPiutang(val)}
+                  >
+                    <SelectTrigger className="w-full disabled:opacity-100">
+                      <SelectValue placeholder="Choose member" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {users.map((data) => (
+                        <SelectItem value={data.id} key={data.id}>
+                          {data.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="grid gap-2 w-full">
+                  <Label>Utang</Label>
+                  <Select
+                    name="utang"
+                    value={formValue.utang}
+                    onValueChange={(val) =>
+                      setFormValue({ ...formValue, utang: val })
+                    }
+                  >
+                    <SelectTrigger className="w-full disabled:opacity-100">
+                      <SelectValue placeholder="Choose member" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {users.map((data) => (
+                        <SelectItem value={data.id} key={data.id}>
+                          {data.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div>
+                <div className="grid gap-2">
+                  <Label>Amount</Label>
+                  <div className="relative w-full">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
+                      Rp
+                    </span>
+                    <Input
+                      placeholder="-"
+                      value={formValue.displayValue}
+                      onChange={handleChange}
+                      className="pl-8" // tambahkan padding kiri agar tidak menimpa "Rp"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <Button type="submit">
+                {isPending ? <Loader2 className="animate-spin" /> : "Send"}
+              </Button>
+            </form>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </div>
+  );
+}

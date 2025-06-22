@@ -1,10 +1,10 @@
 "use client";
 import { getOneWallet } from "@/actions/wallet/profile.action";
 import ProfileTopBar from "@/components/ProfilePage/MyProfileTop";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
 import { SessionUser } from "@/lib/types";
-import { getSrc } from "@/lib/utils/getSrc";
 import { Check, Files } from "lucide-react";
 import React, {
   startTransition,
@@ -18,13 +18,6 @@ export default function EditProfile() {
   const user = dataSession?.data?.user as SessionUser;
   const [state, formAction, isPending] = useActionState(getOneWallet, null);
   const [copied, setCopied] = useState(false);
-
-  const src =
-    getSrc({
-      avatar: user?.avatar || "",
-      avatarId: user?.avatarId || "",
-      image: user?.image || "",
-    }) ?? "";
 
   useEffect(() => {
     if (!user) return;
@@ -51,15 +44,16 @@ export default function EditProfile() {
       </div>
 
       <div className="flex flex-col justify-center items-center">
-        {src ? (
-          <img
-            src={`${src}`}
-            alt=""
-            className="size-32 border rounded-full object-cover"
-          />
-        ) : (
-          <Skeleton className="size-32 border rounded-full bg-neutral-200" />
-        )}
+        <Avatar className="size-32">
+          <AvatarImage src={`${user?.avatar ?? user?.image}`} />
+          <AvatarFallback>
+            <img
+              src={`/avatar.jpeg`}
+              alt=""
+              className="border rounded-full object-cover"
+            />
+          </AvatarFallback>
+        </Avatar>
         <h1 className="text-xl font-bold">{user?.name}</h1>
         <p className="text-sm text-neutral-400">{user?.email}</p>
         <p className="text-sm text-neutral-400">{user?.phonenumber}</p>

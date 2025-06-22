@@ -1,7 +1,7 @@
 "use client";
 import TopBar from "@/components/TopBar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { authClient } from "@/lib/auth-client";
-import { getSrc } from "@/lib/utils/getSrc";
 import { ChevronRight, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -22,26 +22,20 @@ export default function OtherPage() {
     });
   };
 
-  const src = getSrc({
-    avatar: user?.avatar || "",
-    avatarId: user?.avatarId || "",
-    image: user?.image || "",
-  });
-
   return (
     <div className="md:px-0 px-3 md:pt-5 pt-4">
       <TopBar title="Others" iconName="Settings" />
       <div className="flex justify-between items-center pt-8">
         <div className="flex items-center gap-3">
-          {src ? (
-            <img
-              src={`${src}`}
-              alt=""
-              className="size-16 border rounded-full"
+          <Avatar className="size-16">
+            <AvatarImage
+              className="object-cover border"
+              src={`${user?.avatar ?? user?.image}`}
             />
-          ) : (
-            <div className="size-16 border rounded-full bg-neutral-200" />
-          )}
+            <AvatarFallback>
+              <img src={`avatar.jpeg`} alt="" className="border rounded-full" />
+            </AvatarFallback>
+          </Avatar>
           <div>
             <h1 className="font-semibold text-xl">{user?.name}</h1>
             <p className="text-sm text-neutral-400">{user?.email}</p>

@@ -17,6 +17,14 @@ export const auth = betterAuth({
       clientSecret: process.env.TIKTOK_CLIENT_SECRET as string,
       clientKey: process.env.TIKTOK_CLIENT_KEY as string,
     },
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    },
+    facebook: {
+      clientId: process.env.FACEBOOK_CLIENT_ID as string,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
+    },
   },
   user: {
     modelName: "user",
@@ -29,7 +37,7 @@ export const auth = betterAuth({
       avatar: {
         type: "string",
         required: false,
-        defaultValue: "avatar.png",
+        defaultValue: "avatar.jpeg",
         input: true,
       },
       avatarId: {

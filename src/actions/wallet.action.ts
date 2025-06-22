@@ -97,6 +97,16 @@ export const createWallet = async (
       },
     });
 
+    if (data.type === "group") {
+      await prisma.member.create({
+        data: {
+          id: generateId(32),
+          userId: formData.get("user_id") as string,
+          walletId: data?.id,
+        },
+      });
+    }
+
     revalidatePath("/wallet");
     return {
       status: true,
@@ -105,7 +115,6 @@ export const createWallet = async (
       results: data,
     };
   } catch (error) {
-    console.error(error);
     if (error instanceof AppError) {
       return {
         status: false,
@@ -345,6 +354,55 @@ export const updateWallet = async (prevState: unknown, formData: FormData) => {
       statusCode: 200,
       message: "Success update wallet",
       results: data,
+    };
+  } catch (error) {
+    if (error instanceof AppError) {
+      return {
+        status: false,
+        statusCode: error.statusCode,
+        message: error.message,
+        results: null,
+      };
+    }
+
+    return {
+      status: false,
+      statusCode: 500,
+      message: "Internal Server Error",
+      results: null,
+    };
+  }
+};
+
+export const createEWallet = async (preState: unknown, formData: FormData) => {
+  try {
+    const exists = await prisma.wallet.findFirst({
+      where: {
+        userId: String(formData.get("user_id")),
+        name: "Dompet Utama",
+      },
+    });
+
+    let results;
+    if (!exists) {
+      results = await prisma.wallet.create({
+        data: {
+          id: generateWalletId(),
+          name: "Dompet Utama",
+          userId: String(formData.get("user_id")),
+          type: "self",
+          kategori: "wallet",
+          category: "default",
+          balance: 0,
+        },
+      });
+    }
+
+    return {
+      status: true,
+      statusCode: 200,
+      message: "Success create main wallet",
+      results,
     };
   } catch (error) {
     if (error instanceof AppError) {

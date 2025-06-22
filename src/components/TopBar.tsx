@@ -12,9 +12,14 @@ const iconMap = {
 
 interface TopBarProps {
   title: string;
-  iconName: keyof typeof iconMap;
+  iconName?: keyof typeof iconMap;
   value?: boolean;
   setOnClick?: Dispatch<SetStateAction<boolean | undefined>>;
+  renderChildren?: (props: {
+    iconSize: number;
+    fontSize: number;
+    barScroll: boolean;
+  }) => React.ReactNode;
 }
 
 export default function TopBar({
@@ -22,8 +27,9 @@ export default function TopBar({
   iconName,
   setOnClick,
   value,
+  renderChildren,
 }: TopBarProps) {
-  const Icon = iconMap[iconName];
+  const Icon = iconMap[iconName ?? "Edit"];
   const [barScroll, setBarScroll] = useState(false);
   const [sizeIcon, setSizeIcon] = useState({
     icon: 28,
@@ -83,16 +89,26 @@ export default function TopBar({
         </div>
 
         <div className="flex gap-2">
-          {Icon && (
-            <Icon
-              onClick={() => {
-                if (setOnClick) {
-                  setOnClick(value);
-                }
-              }}
-              size={!barScroll ? sizeIcon.icon : 23}
-              className="duration-200"
-            />
+          {renderChildren ? (
+            renderChildren({
+              iconSize: !barScroll ? sizeIcon.icon : 23,
+              fontSize: !barScroll ? sizeIcon.font : 16,
+              barScroll,
+            })
+          ) : (
+            <>
+              {Icon && (
+                <Icon
+                  onClick={() => {
+                    if (setOnClick) {
+                      setOnClick(value);
+                    }
+                  }}
+                  size={!barScroll ? sizeIcon.icon : 23}
+                  className="duration-200"
+                />
+              )}
+            </>
           )}
         </div>
       </div>

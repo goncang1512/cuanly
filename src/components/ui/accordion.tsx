@@ -28,12 +28,14 @@ function AccordionItem({
 interface NewComponentAccordionTrigger
   extends React.ComponentProps<typeof AccordionPrimitive.Trigger> {
   classIcon?: string;
+  icon?: boolean;
 }
 
 function AccordionTrigger({
   className,
   children,
   classIcon,
+  icon = true,
   ...props
 }: NewComponentAccordionTrigger) {
   return (
@@ -47,12 +49,14 @@ function AccordionTrigger({
         {...props}
       >
         {children}
-        <ChevronDownIcon
-          className={cn(
-            "text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200",
-            classIcon
-          )}
-        />
+        {icon && (
+          <ChevronDownIcon
+            className={cn(
+              "text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200",
+              classIcon
+            )}
+          />
+        )}
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
   );

@@ -1,11 +1,10 @@
 "use client";
 import { updateUserProfile } from "@/actions/user.action";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
 import { useFormActionState } from "@/lib/customHook/useFormActionState";
-import { getSrc } from "@/lib/utils/getSrc";
 import { LoaderCircle } from "lucide-react";
 import React, { InputHTMLAttributes, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -24,13 +23,6 @@ export default function EditProfile() {
       },
       false
     );
-
-  const src =
-    getSrc({
-      avatar: user?.avatar || "",
-      avatarId: user?.avatarId || "",
-      image: user?.image || "",
-    }) ?? "";
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -68,15 +60,16 @@ export default function EditProfile() {
     >
       <div className="flex flex-col gap-3 justify-center items-center w-full">
         <div className="flex flex-col gap-3 items-center">
-          {preview || src ? (
-            <img
-              src={`${preview || src}`}
-              alt=""
-              className="size-32 border rounded-full object-cover"
-            />
-          ) : (
-            <Skeleton className="size-32 border rounded-full bg-neutral-200" />
-          )}
+          <Avatar className="size-32">
+            <AvatarImage src={`${preview ?? user?.avatar ?? user?.image}`} />
+            <AvatarFallback>
+              <img
+                src={`/avatar.jpeg`}
+                alt=""
+                className="border rounded-full object-cover"
+              />
+            </AvatarFallback>
+          </Avatar>
           <Label
             className="font-bold underline text-xl cursor-pointer"
             htmlFor="foto-profile"

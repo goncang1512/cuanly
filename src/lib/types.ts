@@ -56,3 +56,22 @@ export type TPlanning = {
   updatedAt: Date;
   user?: UserType;
 };
+
+export type TProvider =
+  | "github"
+  | "apple"
+  | "discord"
+  | "facebook"
+  | "microsoft"
+  | "google"
+  | "spotify"
+  | "twitch"
+  | "twitter"
+  | "dropbox"
+  | "kick"
+  | "linkedin"
+  | "gitlab"
+  | "tiktok"
+  | "reddit"
+  | "roblox"
+  | "vk";

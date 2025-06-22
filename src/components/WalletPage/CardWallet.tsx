@@ -13,7 +13,11 @@ export default function CardWallet({ wallet }: { wallet: WalletType | null }) {
   return (
     <Card className="h-32 p-0 overflow-hidden border-0">
       <Link
-        href={`/wallet/${wallet?.id}`}
+        href={
+          wallet?.type === "group"
+            ? `/wallet/group/${wallet.id}`
+            : `/wallet/${wallet?.id}`
+        }
         className="items-center flex-col gap-1 justify-between h-full flex p-2"
       >
         <div className="flex justify-start w-full size-12">
