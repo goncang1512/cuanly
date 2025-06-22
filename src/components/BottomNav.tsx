@@ -5,7 +5,7 @@ import DrawerAdd from "./Navigation/DrawerAdd";
 import { usePathname } from "next/navigation";
 import NavContextProvider from "@/lib/context/NavContext";
 import { Ellipsis } from "lucide-react";
-
+// BOTTOM NAVBAR
 function BottomNav() {
   const pathname = usePathname();
   return (
