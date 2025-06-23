@@ -34,7 +34,7 @@ export default function CardWallet({
           <div>
             <h1 className="font-semibold text-neutral-800">{wallet?.name}</h1>
             <div className="flex items-center gap-2">
-              <p className="text-xs text-neutral-400">
+              <p className="text-xs text-neutral-500">
                 {wallet?.id.match(/.{1,4}/g)?.join(" ")}
               </p>
               <button

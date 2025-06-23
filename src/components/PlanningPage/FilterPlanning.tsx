@@ -8,7 +8,6 @@ import React, { useActionState, useContext } from "react";
 
 export default function FilterPlanning() {
   const { planningOptimis, filterPlanning } = useContext(PlanningContext);
-
   const data = filterPlanning.length > 0 ? filterPlanning : planningOptimis;
 
   return (
@@ -25,7 +24,24 @@ export default function FilterPlanning() {
 
 const PlanningShow = ({ data }: { data: TPlanning }) => {
   const { Icon, iconData } = iconFn(data?.icon);
+  const { addPlanning, setFilterPlanning } = useContext(PlanningContext);
   const [, formAction, isPending] = useActionState(deletePlanning, null);
+
+  const removePlanning = (id: string) => {
+    addPlanning({
+      id: id,
+      name: "",
+      description: "",
+      price: 0,
+      deadline: new Date(),
+      icon: "",
+      userId: "",
+      recurrenceType: "monthly",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      action: "delete",
+    });
+  };
 
   return (
     <div className="flex items-center w-full justify-between">
@@ -46,7 +62,11 @@ const PlanningShow = ({ data }: { data: TPlanning }) => {
         <p>{formatDate(String(data?.deadline))}</p>
         <form
           action={(formData) => {
+            removePlanning(data?.id);
             formData.append("plan_id", data?.id);
+            setFilterPlanning((prev) =>
+              prev.filter((plan) => plan.id !== data?.id)
+            );
             formAction(formData);
           }}
         >

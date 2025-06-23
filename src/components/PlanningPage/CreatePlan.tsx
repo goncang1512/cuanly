@@ -119,7 +119,7 @@ export default function CreatePlan() {
         <DrawerContent
           aria-describedby="drawer-create-planning"
           buttonClose={false}
-          className="data-[vaul-drawer-direction=bottom]:max-h-[100vh] h-screen data-[vaul-drawer-direction=bottom]:rounded-none data-[vaul-drawer-direction=bottom]:border-0"
+          className="data-[vaul-drawer-direction=bottom]:max-h-[100vh] h-screen data-[vaul-drawer-direction=bottom]:rounded-none data-[vaul-drawer-direction=bottom]:border-0 mx:px-0 px-3"
         >
           <DrawerHeader className="flex justify-center w-full">
             <button

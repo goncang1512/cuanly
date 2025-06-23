@@ -14,10 +14,11 @@ export const PlanningContext = createContext(
     setDrawerCreate: Dispatch<SetStateAction<boolean>>;
     planning?: TPlanning[] | null;
     planningOptimis: TPlanning[];
-    addPlanning: (action: TPlanning) => void;
+    addPlanning: (action: TPlanning & { action?: string }) => void;
     filterPlanning: TPlanning[];
     setFilterPlanning: Dispatch<SetStateAction<TPlanning[]>>;
     handleClickDate: (date: Date) => void;
+    filterPlanningByMonth: (selectedDate: Date) => void;
   }
 );
 
@@ -32,7 +33,7 @@ export default function PlanningContextProvider({
   const [filterPlanning, setFilterPlanning] = useState<TPlanning[]>([]);
   const [planningOptimis, addPlanning] = useOptimistic(
     planning || [],
-    (state: TPlanning[], newState: TPlanning) => {
+    (state: TPlanning[], newState: TPlanning & { action?: string }) => {
       return [newState, ...state];
     }
   );
@@ -77,6 +78,56 @@ export default function PlanningContextProvider({
     setFilterPlanning(matchedPlanning);
   };
 
+  const filterPlanningByMonth = (selectedDate: Date) => {
+    const matched: TPlanning[] = [];
+
+    const selectedMonth = selectedDate.getMonth();
+    const selectedYear = selectedDate.getFullYear();
+
+    for (const plan of planningOptimis || []) {
+      const deadline = new Date(plan.deadline);
+
+      const isSameMonthAndYear =
+        deadline.getMonth() === selectedMonth &&
+        deadline.getFullYear() === selectedYear;
+
+      const recurrence = plan.recurrenceType;
+
+      if (recurrence === "ontime" && isSameMonthAndYear) {
+        matched.push(plan);
+      }
+
+      // monthly: jika tanggalnya masih ada di bulan yang dimaksud
+      if (recurrence === "monthly") {
+        matched.push(plan);
+      }
+
+      // yearly: jika bulan sama
+      if (recurrence === "yearly" && deadline.getMonth() === selectedMonth) {
+        matched.push(plan);
+      }
+
+      // weekly: jika ada setidaknya satu hari di bulan ini yang cocok
+      if (recurrence === "weekly") {
+        const startOfMonth = new Date(selectedYear, selectedMonth, 1);
+        const endOfMonth = new Date(selectedYear, selectedMonth + 1, 0);
+
+        for (
+          let d = new Date(startOfMonth);
+          d <= endOfMonth;
+          d.setDate(d.getDate() + 1)
+        ) {
+          if (d.getDay() === deadline.getDay()) {
+            matched.push(plan);
+            break;
+          }
+        }
+      }
+    }
+
+    setFilterPlanning(matched);
+  };
+
   return (
     <PlanningContext.Provider
       value={{
@@ -88,6 +139,7 @@ export default function PlanningContextProvider({
         filterPlanning,
         setFilterPlanning,
         handleClickDate,
+        filterPlanningByMonth,
       }}
     >
       {children}

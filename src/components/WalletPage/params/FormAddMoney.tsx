@@ -28,6 +28,7 @@ export type FormTypeTrans = {
   description: string;
   pickCategory: string;
   rawValue: string;
+  method: string;
 };
 
 const dataForm = {
@@ -35,6 +36,7 @@ const dataForm = {
   displayValue: "",
   description: "",
   pickCategory: "",
+  method: "",
 };
 
 export default function FormAddMoney({
@@ -49,7 +51,7 @@ export default function FormAddMoney({
   const [seeDrawer, setSeeDrawer] = useState(false);
   const [walletPick, setWalletPick] = useState<WalletType | null | undefined>();
   const { handleAction } = useContext(WalletContext);
-  const { formValue, setFormValue, isPending, formAction } =
+  const { state, formValue, setFormValue, isPending, formAction } =
     useFormActionState<FormTypeTrans>(addMoneyWallet, dataForm);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,11 +65,11 @@ export default function FormAddMoney({
   };
 
   useEffect(() => {
-    if (isPending) {
+    if (state.status) {
       setSeeDrawer(false);
       setFormValue(dataForm);
     }
-  }, [isPending]);
+  }, [isPending, state.status]);
 
   return (
     <Drawer open={seeDrawer} onOpenChange={setSeeDrawer}>
@@ -138,8 +140,14 @@ export default function FormAddMoney({
                 </div>
                 {typeTransaction === "pay" && (
                   <div className="grid w-full items-center gap-1.5">
-                    <Label htmlFor="description">Description</Label>
-                    <Select name="methodpay">
+                    <Label htmlFor="description">Method</Label>
+                    <Select
+                      value={formValue.method}
+                      onValueChange={(val) =>
+                        setFormValue({ ...formValue, method: val })
+                      }
+                      name="methodpay"
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Method" />
                       </SelectTrigger>

@@ -37,6 +37,7 @@ export default async function Home() {
             </Link>
           </div>
         </div>
+
         <div className="flex md:flex-row flex-col">
           <div className="flex-1 shadow-sm border p-3 flex items-center justify-center rounded-md bg-white">
             <PieChartMonth data={data?.results?.pieChart} />
