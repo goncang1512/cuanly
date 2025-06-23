@@ -40,6 +40,8 @@ export default function EditProfile() {
       email: user?.email,
       phoneNumber: user?.phonenumber || "",
     });
+
+    setPreview(String(user?.avatar ?? user?.image));
   }, [user]);
 
   useEffect(() => {
@@ -61,7 +63,7 @@ export default function EditProfile() {
       <div className="flex flex-col gap-3 justify-center items-center w-full">
         <div className="flex flex-col gap-3 items-center">
           <Avatar className="size-32">
-            <AvatarImage src={`${preview ?? user?.avatar ?? user?.image}`} />
+            <AvatarImage className="object-cover" src={`${preview}`} alt="" />
             <AvatarFallback>
               <img
                 src={`/avatar.jpeg`}

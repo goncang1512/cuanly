@@ -48,9 +48,12 @@ export default function OtherPage() {
 
       {/* OTHER */}
       <div className="pt-5">
-        <button onClick={logout} className="flex gap-3 items-center w-full">
+        <button
+          onClick={logout}
+          className="flex pb-2 gap-3 items-center w-full border-b"
+        >
           <LogOut />
-          <p className="text-start border-b w-full pb-2">Logout</p>
+          <p className="text-start w-full">Logout</p>
         </button>
       </div>
 

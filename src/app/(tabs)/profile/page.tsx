@@ -45,7 +45,10 @@ export default function EditProfile() {
 
       <div className="flex flex-col justify-center items-center">
         <Avatar className="size-32">
-          <AvatarImage src={`${user?.avatar ?? user?.image}`} />
+          <AvatarImage
+            className="object-cover"
+            src={`${user?.avatar ?? user?.image}`}
+          />
           <AvatarFallback>
             <img
               src={`/avatar.jpeg`}

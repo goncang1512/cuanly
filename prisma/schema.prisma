@@ -22,13 +22,13 @@ model User {
   createdAt     DateTime
   updatedAt     DateTime
   phonenumber   String?
+  avatar        String?
+  avatarId      String?
   sessions      Session[]
   accounts      Account[]
 
   Wallet      Wallet[]
   Transaction Transaction[]
-  avatar      String        @default("avatar.jpeg")
-  avatarId    String        @default("default")
 
   Planning        Planning[]
   username        String?

@@ -43,12 +43,10 @@ export const auth = betterAuth({
       avatar: {
         type: "string",
         required: false,
-        defaultValue: "avatar.jpeg",
         input: true,
       },
       avatarId: {
         type: "string",
-        defaultValue: "defualt",
         required: false,
         input: true,
       },
