@@ -1,5 +1,4 @@
 "use server";
-
 import prisma from "@/lib/prisma";
 import { generateId } from "better-auth";
 import { $Enums } from "@prisma/client";

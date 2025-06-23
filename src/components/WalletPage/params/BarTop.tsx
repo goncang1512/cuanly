@@ -42,7 +42,9 @@ export default function BarTop({ wallet }: { wallet?: WalletType | null }) {
           <h1 className="text-sm font-medium">Wallet details</h1>
         </div>
         <Drawer>
-          <DrawerTrigger>
+          <DrawerTrigger
+            className={`${wallet?.name === "Dompet Utama" && "hidden"}`}
+          >
             <Ellipsis />
           </DrawerTrigger>
           <DrawerContent className="h-[50vh]">

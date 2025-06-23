@@ -62,11 +62,11 @@ export default async function WalletDetail({
               <DrawerTrigger
                 disabled={
                   Number(wallet?.results?.wallet?.balance) <= 0 &&
-                  wallet?.results?.wallet?.category !== "receivable"
+                  wallet?.results?.wallet?.category !== "debt"
                 }
                 className={`${
                   Number(wallet?.results?.wallet?.balance) > 0 ||
-                  wallet?.results?.wallet?.category === "receivable"
+                  wallet?.results?.wallet?.category === "debt"
                     ? "bg-emerald text-white"
                     : "bg-neutral-200 text-neutral-400"
                 }    size-10 rounded-full flex items-center justify-center`}

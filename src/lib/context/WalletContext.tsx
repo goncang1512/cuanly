@@ -94,7 +94,7 @@ function WalletContextProvider({
 
     if (
       typeTransaction !== "add" &&
-      String(wallet?.category) !== "receivable" &&
+      String(wallet?.category) !== "debt" &&
       Number(formValue.rawValue) > Number(wallet?.balance)
     ) {
       toast("Balance is not sufficient for transaction", {
