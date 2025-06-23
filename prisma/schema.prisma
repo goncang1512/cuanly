@@ -33,12 +33,12 @@ model User {
   Planning        Planning[]
   username        String?
   displayUsername String?
-  member Member[]
+  member          Member[]
+  toLedger        ledger[]   @relation("toUser")
+  fromLedger      ledger[]   @relation("fromUser")
 
-  @@map("user")
   @@unique([username])
-  toLedger ledger[] @relation("toUser")
-  fromLedger ledger[] @relation("fromUser")
+  @@map("user")
 }
 
 model Session {
@@ -113,7 +113,7 @@ model Wallet {
   updatedAt       DateTime      @updatedAt
   transaction     Transaction[]
   moveTransaction Transaction[] @relation(name: "MoveTransaction")
-  member Member[]
+  member          Member[]
 
   @@map("wallet")
 }
@@ -161,31 +161,31 @@ enum RecurenceT {
 }
 
 model Planning {
-  id                    String   @id @default(dbgenerated())
-  name                  String
-  description           String
-  price                 Float
-  deadline              DateTime
-  icon                  String
-  userId                String
-  recurrenceType        RecurenceT @default(weekly)
+  id             String     @id @default(dbgenerated())
+  name           String
+  description    String
+  price          Float
+  deadline       DateTime
+  icon           String
+  userId         String
+  recurrenceType RecurenceT @default(weekly)
 
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user                  User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("planning")
 }
 
 model Member {
-  id String @id @default(dbgenerated())
-  userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(dbgenerated())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   walletId  String
-  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  wallet    Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("member")
 }
@@ -196,13 +196,17 @@ enum StatusLedger {
 }
 
 model ledger {
-  id  String @id @default(dbgenerated())
-  fromId  String
-  from  User @relation("fromUser", fields: [fromId], references: [id], onDelete: Cascade)
-  toId  String
-  to User @relation("toUser", fields: [toId], references: [id], onDelete: Cascade)
-  amount Int
-  status StatusLedger @default(unpaid)
+  id        String       @id @default(dbgenerated())
+  fromId    String
+  walletId  String
+  from      User         @relation("fromUser", fields: [fromId], references: [id], onDelete: Cascade)
+  toId      String
+  to        User         @relation("toUser", fields: [toId], references: [id], onDelete: Cascade)
+  amount    Int
+  paidMount Int          @default(0)
+  status    StatusLedger @default(unpaid)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 
   @@map("ledger")
 }

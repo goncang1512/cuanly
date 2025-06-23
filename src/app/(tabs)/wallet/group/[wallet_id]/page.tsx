@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/table";
 import NavbarGroup from "@/components/WalletPage/group/NavbarGroup";
 import PaidComponent from "@/components/WalletPage/group/PaidComponent";
+import TableTransactin from "@/components/WalletPage/group/TableTransactin";
 import React from "react";
 
 export default async function WalletGroup({
@@ -18,10 +19,10 @@ export default async function WalletGroup({
 }) {
   const params = await getParams;
   const data = await getWalletMember(String(params.wallet_id));
-  const user = data.results;
+  const user = data.results?.users;
 
   return (
-    <div className="min-h-screen md:px-2 px-4">
+    <div className="min-h-screen md:px-2 px-4 pb-10">
       <NavbarGroup params={getParams} />
 
       <div className="pt-14">
@@ -78,16 +79,30 @@ export default async function WalletGroup({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {user?.map((item) => {
+            {user?.map((rowUser) => {
               return (
-                <TableRow className="border-black" key={item.id}>
+                <TableRow className="border-black" key={rowUser.id}>
                   <TableCell className="border-r border-black">
-                    {item.name}
+                    {rowUser.name}
                   </TableCell>
-                  {Array.from({ length: user.length }).map((_, index) => {
+                  {user.map((colUser) => {
+                    const totalAmount = data.results?.fromLedger
+                      .filter(
+                        (l) =>
+                          l.fromId === colUser.id &&
+                          l.toId === rowUser.id &&
+                          l.status === "unpaid"
+                      )
+                      .reduce((sum, l) => sum + l.amount, 0);
                     return (
-                      <TableCell className="border-black border-r" key={index}>
-                        Bayar
+                      <TableCell
+                        className="border-black border-r"
+                        key={colUser.id}
+                      >
+                        Rp{" "}
+                        {(totalAmount ?? 0) > 1
+                          ? (totalAmount ?? 0).toLocaleString("id-ID")
+                          : "-"}
                       </TableCell>
                     );
                   })}
@@ -98,6 +113,7 @@ export default async function WalletGroup({
         </Table>
 
         <PaidComponent users={user ?? []} />
+        <TableTransactin data={data.results?.fromLedger ?? []} />
       </div>
     </div>
   );

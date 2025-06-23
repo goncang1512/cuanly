@@ -79,20 +79,84 @@ export const getWalletMember = async (wallet_id: string) => {
           select: {
             name: true,
             id: true,
-            toLedger: true,
-            fromLedger: true,
+            fromLedger: {
+              where: {
+                walletId: wallet_id,
+              },
+              include: {
+                from: {
+                  select: {
+                    name: true,
+                    id: true,
+                  },
+                },
+                to: {
+                  select: {
+                    name: true,
+                    id: true,
+                  },
+                },
+              },
+              orderBy: {
+                createdAt: "desc",
+              },
+            },
           },
         },
       },
     });
 
-    const user = result.flatMap((data) => data.user);
+    const users: { id: string; name: string | null }[] = [];
+    const fromLedger = [];
+
+    for (const { user } of result) {
+      const { id, name, fromLedger: fromL } = user;
+
+      users.push({ id, name });
+      fromLedger.push(...fromL);
+    }
 
     return {
       status: true,
       statusCode: 200,
       message: "Success",
-      results: user,
+      results: { users, fromLedger },
+    };
+  } catch (error) {
+    if (error instanceof AppError) {
+      return {
+        status: false,
+        statusCode: error.statusCode,
+        message: error.message,
+        results: null,
+      };
+    }
+
+    return {
+      status: false,
+      statusCode: 500,
+      message: "Internal Server Error",
+      results: null,
+    };
+  }
+};
+
+export const checkMember = async (wallet_id: string) => {
+  try {
+    const member = await prisma.member.findMany({
+      where: {
+        walletId: wallet_id,
+      },
+      select: {
+        userId: true,
+      },
+    });
+
+    return {
+      status: true,
+      statusCode: 200,
+      message: "Success get member user",
+      results: member.map((data) => data.userId),
     };
   } catch (error) {
     if (error instanceof AppError) {

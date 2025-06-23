@@ -19,7 +19,7 @@ export default function TopBar({ user }: { user: SessionUser }) {
           <h1 className="font-semibold duration-200">My profile</h1>
         </div>
 
-        <Link href={`/profile/@${user?.name}`} className="flex gap-2">
+        <Link href={`/profile/${user?.id}`} className="flex gap-2">
           <Pencil size={20} className="duration-200" />
         </Link>
       </div>

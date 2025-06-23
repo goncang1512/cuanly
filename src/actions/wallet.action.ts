@@ -139,25 +139,50 @@ export const getWalletPage = async (
 ): Promise<ApiResponse<WalletType[]>> => {
   try {
     const typeFilter = !type ? "self" : type === "all" ? undefined : type;
-
-    const data = await prisma.wallet.findMany({
+    const memberGroup = await prisma.member.findMany({
       where: {
         userId: user_id,
-        ...(typeFilter !== undefined && { type: typeFilter }),
+      },
+      select: {
+        wallet: true,
       },
     });
 
-    const sortedWallets = data.sort((a, b) => {
-      if (a.name === "Dompet Utama") return -1;
-      if (b.name === "Dompet Utama") return 1;
-      return a.name.localeCompare(b.name);
-    });
+    const groupWallet = memberGroup.flatMap((data) => data.wallet);
+
+    let results: WalletType[] = [];
+
+    if (typeFilter === "group") {
+      results = groupWallet;
+    } else {
+      const selfWallets = await prisma.wallet.findMany({
+        where: {
+          userId: user_id,
+          type: {
+            not: "group",
+          },
+          ...(typeFilter !== undefined && { type: typeFilter }),
+        },
+      });
+
+      const filteredWallet = selfWallets.sort((a, b) => {
+        if (a.name === "Dompet Utama") return -1;
+        if (b.name === "Dompet Utama") return 1;
+        return a.name.localeCompare(b.name);
+      });
+
+      if (type === "all") {
+        results = [...filteredWallet, ...groupWallet];
+      } else {
+        results = filteredWallet;
+      }
+    }
 
     return {
       status: true,
       statusCode: 200,
       message: "Success get my pocket",
-      results: sortedWallets,
+      results: results,
     };
   } catch (error) {
     console.error(error);

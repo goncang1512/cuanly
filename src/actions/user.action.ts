@@ -67,7 +67,7 @@ export const updateUserProfile = async (
       headers: await headers(),
     });
     let result: UploadApiResponse | undefined;
-    if (formImage) {
+    if (formImage && formImage.size > 0) {
       const fileBuffer = await formImage.arrayBuffer();
       const image = new Uint8Array(fileBuffer);
       result = await new Promise((resolve, reject) => {
@@ -106,7 +106,7 @@ export const updateUserProfile = async (
       },
     });
 
-    revalidatePath(`/profile/@${data.name}`);
+    revalidatePath(`/profile/${data.id}`);
     return {
       status: true,
       statusCode: 200,
@@ -114,6 +114,7 @@ export const updateUserProfile = async (
       results: data,
     };
   } catch (error) {
+    console.log(error);
     if (error instanceof AppError) {
       return {
         status: false,
@@ -124,7 +125,7 @@ export const updateUserProfile = async (
     }
 
     return {
-      status: true,
+      status: false,
       statusCode: 500,
       message: "Internal Server Error",
       results: null,

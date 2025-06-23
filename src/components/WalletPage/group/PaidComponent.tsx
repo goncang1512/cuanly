@@ -21,6 +21,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { authClient } from "@/lib/auth-client";
 import { useFormActionState } from "@/lib/customHook/useFormActionState";
 import { Loader2 } from "lucide-react";
+import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 interface UserProps {
@@ -35,6 +36,7 @@ const formLedger = {
 };
 
 export default function PaidComponent({ users }: { users: UserProps[] }) {
+  const params = useParams();
   const [piutang, setPiutang] = useState("");
   const { formValue, state, setFormValue, formAction, isPending } =
     useFormActionState(createLedger, formLedger);
@@ -59,8 +61,6 @@ export default function PaidComponent({ users }: { users: UserProps[] }) {
     const numeric = raw.replace(/[^0-9]/g, "");
     const value = Number(numeric);
 
-    console.log({ value, numeric, raw });
-
     setFormValue({
       ...formValue,
       displayValue: numeric ? value.toLocaleString("id-ID") : "",
@@ -84,14 +84,15 @@ export default function PaidComponent({ users }: { users: UserProps[] }) {
       >
         <AccordionItem value="item-1">
           <AccordionTrigger
-            aria-expanded="true"
             classIcon="hidden"
-            className="h-content w-content hover:no-underline flex-0 bg-green-400 px-3 py-1"
+            className="h-content whitespace-nowrap w-content hover:no-underline flex-0 bg-green-400 px-3 py-1"
           >
-            Paid
+            Add Transaction
           </AccordionTrigger>
-          <AccordionContent className="p-3">
-            <h1 className="text-center font-medium text-base pb-3">Paid</h1>
+          <AccordionContent className="">
+            <h1 className="text-center font-medium text-base pb-3">
+              Add Transaction
+            </h1>
 
             <Tabs
               value={tabs}
@@ -125,6 +126,7 @@ export default function PaidComponent({ users }: { users: UserProps[] }) {
                 formData.append("amount", String(formValue.rawValue));
                 formData.append("piutang", piutang);
                 formData.append("utang", formValue.utang);
+                formData.append("wallet_id", String(params?.wallet_id));
                 formAction(formData);
               }}
               className="grid gap-2"

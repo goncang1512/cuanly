@@ -75,3 +75,22 @@ export type TProvider =
   | "reddit"
   | "roblox"
   | "vk";
+
+export type TLedger = {
+  from?: {
+    id: string;
+    name: string | null;
+  };
+  to?: {
+    id: string;
+    name: string | null;
+  };
+} & {
+  id: string;
+  amount: number;
+  paidMount: number;
+  walletId?: string;
+  status: $Enums.StatusLedger;
+  createdAt?: Date;
+  udpatedAt?: Date;
+};
