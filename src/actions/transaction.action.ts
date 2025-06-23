@@ -13,12 +13,6 @@ export const addMoneyWallet = async (
 ) => {
   try {
     const type = formData.get("type") as $Enums.TransType;
-    const userId = formData.get("user_id") as string;
-    const fromId = formData.get("from_id") as string;
-    const walletId = formData.get("to_id") as string;
-    const description = formData.get("description") as string;
-
-    console.log({ type, userId, fromId, walletId, description });
 
     let data: TransactionType;
     if (type === "move") {
@@ -80,6 +74,7 @@ export const addMoneyWallet = async (
     if (pathname) {
       revalidatePath(String(pathname));
     }
+    revalidatePath(`/wallet/${data.fromId ?? data.walletId}`);
     return {
       status: true,
       statusCode: 201,
