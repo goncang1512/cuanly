@@ -39,7 +39,7 @@ export const planningTime = (
     }
 
     if (
-      plan.recurrenceType === "ontime" &&
+      plan.recurrenceType === "onetime" &&
       deadline.toDateString() === currentDate.toDateString()
     ) {
       return { matchedPlanning: true, planningMatch: plan };
@@ -57,7 +57,7 @@ export function getPlanningThisMonth(planningOptimis: TPlanning[], date: Date) {
     const deadline = new Date(item.deadline);
 
     switch (item.recurrenceType) {
-      case "ontime":
+      case "onetime":
         return isSameMonth(deadline, date) && getYear(deadline) === currentYear;
 
       case "monthly":

@@ -1,5 +1,9 @@
 "use client";
-import { canceledLedger, paidLedger } from "@/actions/ledger.action";
+import {
+  canceledLedger,
+  deleteLedger,
+  paidLedger,
+} from "@/actions/ledger.action";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -165,14 +169,22 @@ const DialogPaid = ({ item }: { item: TLedger }) => {
               </Button>
             </form>
           )}
-        {session?.data?.user?.id === item?.from?.id &&
-          item?.status === "paid" && (
-            <CanceldButton
+        {session?.data?.user?.id === item?.from?.id && (
+          <div className="flex justify-between items-center">
+            <DeleteButton
               item={item}
               setOnDialog={setOnDialog}
               setErrMsg={setErrMsg}
             />
-          )}
+            {item.status === "paid" && (
+              <CanceldButton
+                item={item}
+                setOnDialog={setOnDialog}
+                setErrMsg={setErrMsg}
+              />
+            )}
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
@@ -212,6 +224,44 @@ const CanceldButton = ({
     >
       <Button className="bg-red-500 hover:bg-red-400 w-content">
         {isPending ? <Loader2 className="animate-spin" /> : "Canceled"}
+      </Button>
+    </form>
+  );
+};
+
+const DeleteButton = ({
+  item,
+  setOnDialog,
+  setErrMsg,
+}: {
+  item: TLedger;
+  setOnDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  setErrMsg: React.Dispatch<React.SetStateAction<string>>;
+}) => {
+  const { formAction, isPending, state } = useFormActionState(
+    deleteLedger,
+    null
+  );
+
+  useEffect(() => {
+    setErrMsg("");
+    if (state.status) {
+      setOnDialog(false);
+    } else {
+      setErrMsg(state.message);
+    }
+  }, [state.status, isPending]);
+
+  return (
+    <form
+      className="flex justify-end"
+      action={(formData) => {
+        formData.append("ledger_id", item.id);
+        formAction(formData);
+      }}
+    >
+      <Button className="bg-red-500 hover:bg-red-400 w-content">
+        {isPending ? <Loader2 className="animate-spin" /> : "Deleted"}
       </Button>
     </form>
   );

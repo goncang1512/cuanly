@@ -97,9 +97,7 @@ export const getWalletMember = async (wallet_id: string) => {
                   },
                 },
               },
-              orderBy: {
-                createdAt: "desc",
-              },
+              orderBy: [{ status: "asc" }, { createdAt: "desc" }],
             },
           },
         },
@@ -115,6 +113,13 @@ export const getWalletMember = async (wallet_id: string) => {
       users.push({ id, name });
       fromLedger.push(...fromL);
     }
+
+    fromLedger.sort((a, b) => {
+      if (a.status !== b.status) {
+        return a.status === "unpaid" ? -1 : 1;
+      }
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
 
     return {
       status: true,

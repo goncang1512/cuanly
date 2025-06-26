@@ -1,4 +1,5 @@
 import { deletePlanning } from "@/actions/planning.action";
+import { authClient } from "@/lib/auth-client";
 import { PlanningContext } from "@/lib/context/PlanningContext";
 import { iconFn } from "@/lib/dynamicIcon";
 import { formatDate } from "@/lib/time";
@@ -13,7 +14,7 @@ export default function FilterPlanning() {
   return (
     <div className="pt-2">
       <h1 className="font-semibold text-xl">Schedule</h1>
-      <div className="grid gap-2">
+      <div className="grid gap-2 pb-5">
         {data.map((data: TPlanning) => {
           return <PlanningShow key={data.id} data={data} />;
         })}
@@ -26,6 +27,7 @@ const PlanningShow = ({ data }: { data: TPlanning }) => {
   const { Icon, iconData } = iconFn(data?.icon);
   const { addPlanning, setFilterPlanning } = useContext(PlanningContext);
   const [, formAction, isPending] = useActionState(deletePlanning, null);
+  const session = authClient.useSession();
 
   const removePlanning = (id: string) => {
     addPlanning({
@@ -59,25 +61,37 @@ const PlanningShow = ({ data }: { data: TPlanning }) => {
       </div>
 
       <div className="flex items-center gap-2">
-        <p>{formatDate(String(data?.deadline))}</p>
-        <form
-          action={(formData) => {
-            removePlanning(data?.id);
-            formData.append("plan_id", data?.id);
-            setFilterPlanning((prev) =>
-              prev.filter((plan) => plan.id !== data?.id)
-            );
-            formAction(formData);
-          }}
-        >
-          <button type="submit" className="hover:bg-neutral-200 p-1 rounded-md">
-            {isPending ? (
-              <LoaderCircle className="animate-spin" size={20} />
-            ) : (
-              <Trash2 size={20} />
-            )}
-          </button>
-        </form>
+        <div className="flex justify-center flex-col">
+          <p className="text-center text-xs text-neutral-500">
+            {data.recurrenceType}
+          </p>
+          <p className="text-center">
+            {formatDate(String(data?.deadline), data.recurrenceType)}
+          </p>
+        </div>
+        {session?.data?.user?.id === data.userId && (
+          <form
+            action={(formData) => {
+              removePlanning(data?.id);
+              formData.append("plan_id", data?.id);
+              setFilterPlanning((prev) =>
+                prev.filter((plan) => plan.id !== data?.id)
+              );
+              formAction(formData);
+            }}
+          >
+            <button
+              type="submit"
+              className="hover:bg-neutral-200 p-1 rounded-md"
+            >
+              {isPending ? (
+                <LoaderCircle className="animate-spin" size={20} />
+              ) : (
+                <Trash2 size={20} />
+              )}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

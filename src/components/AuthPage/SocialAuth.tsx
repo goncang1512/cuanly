@@ -46,7 +46,7 @@ export default function SocialAuth() {
         <span>Google</span>
       </Button>
       <Button
-        onClick={() => signIn("google")}
+        onClick={() => signIn("facebook")}
         type="button"
         className="w-full bg-[#0866FF] text-white border hover:bg-[#74a9ff]"
       >

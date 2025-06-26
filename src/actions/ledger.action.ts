@@ -7,14 +7,43 @@ import { revalidatePath } from "next/cache";
 
 export const createLedger = async (prevState: unknown, formData: FormData) => {
   try {
-    const result = await prisma.ledger.create({
-      data: {
-        id: generateId(32),
-        fromId: formData.get("piutang") as string,
-        toId: formData.get("utang") as string,
-        amount: Number(formData.get("amount")),
-        walletId: formData.get("wallet_id") as string,
-      },
+    const tabs = formData.get("tabs");
+    const utang = formData.get("utang") as string;
+    const piutang = formData.get("piutang") as string;
+
+    const valueUtang = tabs === "utang" ? utang : JSON.parse(utang);
+    const valuePiutang = tabs === "piutang" ? piutang : JSON.parse(piutang);
+    const amount = Number(formData.get("amount"));
+    const walletId = formData.get("wallet_id") as string;
+
+    const createData = [];
+
+    // Case: banyak piutang, satu utang
+    if (Array.isArray(valuePiutang) && typeof valueUtang === "string") {
+      for (const piutang of valuePiutang) {
+        createData.push({
+          id: generateId(32),
+          fromId: piutang.id,
+          toId: valueUtang,
+          amount,
+          walletId,
+        });
+      }
+    } else if (typeof valuePiutang === "string" && Array.isArray(valueUtang)) {
+      for (const utang of valueUtang) {
+        createData.push({
+          id: generateId(32),
+          fromId: valuePiutang,
+          toId: utang.id,
+          amount,
+          walletId,
+        });
+      }
+    }
+
+    const result = await prisma.ledger.createMany({
+      data: createData,
+      skipDuplicates: true, // opsional: jika id unik
     });
 
     revalidatePath(`/wallet/group/${formData.get("wallet_id") as string}`);
@@ -68,8 +97,10 @@ export const paidLedger = async (prevState: unknown, formData: FormData) => {
         },
       });
 
+      console.log({ updated, paidMount });
+
       // 2. Jika sudah lunas, update status
-      if (updated.paidMount + paidMount >= updated.amount) {
+      if (updated.paidMount === updated.amount) {
         return await tx.ledger.update({
           where: { id: ledgerId },
           data: {
@@ -119,6 +150,40 @@ export const canceledLedger = async (
       data: {
         paidMount: 0,
         status: "unpaid",
+      },
+    });
+
+    revalidatePath(`/wallet/group/${formData.get("wallet_id")}`);
+    return {
+      status: true,
+      statusCode: 201,
+      message: "Succes paid ledger",
+      results: results,
+    };
+  } catch (error) {
+    if (error instanceof AppError) {
+      return {
+        status: false,
+        statusCode: error.statusCode,
+        message: error.message,
+        results: null,
+      };
+    }
+
+    return {
+      status: false,
+      statusCode: 500,
+      message: "Internal Server Error",
+      results: null,
+    };
+  }
+};
+
+export const deleteLedger = async (prevState: unknown, formData: FormData) => {
+  try {
+    const results = await prisma.ledger.delete({
+      where: {
+        id: formData.get("ledger_id") as string,
       },
     });
 

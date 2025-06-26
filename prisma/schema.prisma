@@ -157,7 +157,7 @@ enum RecurenceT {
   monthly
   weekly
   yearly
-  ontime
+  onetime
 }
 
 model Planning {

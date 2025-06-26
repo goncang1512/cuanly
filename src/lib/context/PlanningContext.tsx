@@ -68,7 +68,7 @@ export default function PlanningContextProvider({
       }
 
       if (
-        plan.recurrenceType === "ontime" &&
+        plan.recurrenceType === "onetime" &&
         deadline.toDateString() === selectedDate.toDateString()
       ) {
         matchedPlanning.push(plan);
@@ -93,7 +93,7 @@ export default function PlanningContextProvider({
 
       const recurrence = plan.recurrenceType;
 
-      if (recurrence === "ontime" && isSameMonthAndYear) {
+      if (recurrence === "onetime" && isSameMonthAndYear) {
         matched.push(plan);
       }
 

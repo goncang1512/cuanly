@@ -187,7 +187,7 @@ export default function CreatePlan() {
 
                   <SelectContent>
                     <SelectGroup className="grid gap-2">
-                      {["monthly", "weekly", "yearly", "ontime"].map(
+                      {["monthly", "weekly", "yearly", "onetime"].map(
                         (data, index) => {
                           return (
                             <SelectItem

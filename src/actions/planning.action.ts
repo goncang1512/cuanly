@@ -35,6 +35,7 @@ export const createPlanning = async (
       results: data,
     };
   } catch (error) {
+    console.log(error);
     if (error instanceof AppError) {
       return {
         status: false,
