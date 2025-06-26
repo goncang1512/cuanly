@@ -2,7 +2,7 @@
 import { deleteTransaction } from "@/actions/transaction.action";
 import { useFormActionState } from "@/lib/customHook/useFormActionState";
 import { iconFn, icons } from "@/lib/dynamicIcon";
-import { formatDate } from "@/lib/time";
+import { formatTanggal } from "@/lib/time";
 import { TransactionType } from "@/lib/types";
 import { ArrowLeft, ArrowRight, RefreshCcw, Timer } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -230,7 +230,7 @@ const TableTransaction = ({
         </TableRow>
         <TableRow>
           <TableCell className="w-20 text-neutral-500">Date</TableCell>
-          <TableCell>{formatDate(String(data?.createdAt))}</TableCell>
+          <TableCell>{formatTanggal(String(data?.createdAt))}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell className="w-20 text-neutral-500">Description</TableCell>
@@ -303,7 +303,7 @@ export const TransactionShow = ({
       </div>
       <div className="flex items-center justify-end flex-none w-[27%]">
         <p className="text-sm text-end">
-          {formatDate(String(data?.createdAt))}
+          {formatTanggal(String(data?.createdAt))}
         </p>
       </div>
     </div>

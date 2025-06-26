@@ -25,3 +25,10 @@ export const formatDate = (date: string, status: $Enums.RecurenceT) => {
       return format(parsedDate, "d MMMM yyyy", { locale: enUS }); // fallback
   }
 };
+
+export const formatTanggal = (date: string) => {
+  const parsedDate = new Date(date);
+  if (isNaN(parsedDate.getTime())) return "Tanggal tidak valid";
+
+  return format(parsedDate, "d MMMM yyyy", { locale: enUS });
+};
