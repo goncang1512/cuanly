@@ -94,7 +94,7 @@ function DrawerAdd() {
         <DrawerContent
           aria-describedby="drawer-one"
           buttonClose={false}
-          className="data-[vaul-drawer-direction=bottom]:max-h-[100vh] data-[vaul-drawer-direction=bottom]:rounded-none data-[vaul-drawer-direction=bottom]:border-0"
+          className="data-[vaul-drawer-direction=bottom]:max-h-full h-full data-[vaul-drawer-direction=bottom]:rounded-none data-[vaul-drawer-direction=bottom]:border-0"
         >
           <DrawerHeader className="bg-emerald flex justify-center">
             <button

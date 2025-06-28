@@ -10,7 +10,7 @@ export default async function Home() {
   return (
     <div className="p-2">
       <TopBar />
-      <div className="pt-14 min-h-screen flex flex-col gap-3">
+      <div className="pt-14 min-h-[110vh] flex flex-col gap-3">
         <CardWallet
           wallet={data?.results?.wallet}
           transaction={data?.results?.transaction}

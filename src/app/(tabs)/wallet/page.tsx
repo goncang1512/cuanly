@@ -7,6 +7,7 @@ import CardWallet from "@/components/WalletPage/CardWallet";
 import FormCreateWallet, {
   FormWalletContext,
 } from "@/components/WalletPage/FormCreateWallet";
+import NavbarWallet from "@/components/WalletPage/navbar-wallet";
 import TabsWallet from "@/components/WalletPage/TabsWallet";
 import { auth } from "@/lib/auth";
 import { WalletType } from "@/lib/types";
@@ -31,9 +32,9 @@ async function WalletPage(props: {
   );
 
   return (
-    <div className="p-3 flex flex-col gap-3">
-      <h1 className="text-2xl font-semibold">Wallet</h1>
-      <Tabs defaultValue={query ?? "self"} className="w-full">
+    <div className="py-3 md:px-2 px-3 flex flex-col gap-3 min-h-[110vh]">
+      <NavbarWallet />
+      <Tabs defaultValue={query ?? "self"} className="w-full pt-12">
         <TabsList className="grid w-full grid-cols-3 bg-transparent gap-3">
           <TabsWallet />
           <button className="hidden items-center justify-center h-full px-1">

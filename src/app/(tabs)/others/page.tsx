@@ -2,12 +2,13 @@
 import TopBar from "@/components/TopBar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { authClient } from "@/lib/auth-client";
-import { ChevronRight, LogOut } from "lucide-react";
+import { ChevronRight, Loader2, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 
 export default function OtherPage() {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const session = authClient.useSession();
   const user = session?.data?.user;
@@ -18,12 +19,18 @@ export default function OtherPage() {
         onSuccess: () => {
           router.push("/auth?form=sign-in");
         },
+        onRequest: () => {
+          setLoading(true);
+        },
+        onError: () => {
+          setLoading(false);
+        },
       },
     });
   };
 
   return (
-    <div className="md:px-0 px-3 md:pt-5 pt-4">
+    <div className="md:px-2 px-3 md:pt-5 pt-4 min-h-[110vh]">
       <TopBar title="Others" iconName="Settings" />
       <div className="flex justify-between items-center pt-8">
         <div className="flex items-center gap-3">
@@ -52,12 +59,10 @@ export default function OtherPage() {
           onClick={logout}
           className="flex pb-2 gap-3 items-center w-full border-b"
         >
-          <LogOut />
+          {loading ? <Loader2 className="animate-spin" /> : <LogOut />}
           <p className="text-start w-full">Logout</p>
         </button>
       </div>
-
-      <div className="h-[300vh]"></div>
     </div>
   );
 }

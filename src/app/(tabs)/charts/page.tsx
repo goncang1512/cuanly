@@ -1,6 +1,7 @@
 import { getTransactionChart } from "@/actions/transactions/charts.action";
 import BarChart, { BarChartThisMonth } from "@/components/ChartPage/BarChart";
 import LineChart from "@/components/ChartPage/LineChart";
+import NavbarCharts from "@/components/ChartPage/navbar-charts";
 import PieChart from "@/components/ChartPage/PieChart";
 import React from "react";
 
@@ -13,7 +14,9 @@ export default async function ChartsPage() {
   );
 
   return (
-    <div className="p-3 flex flex-col gap-2">
+    <div className="py-3 md:px-2 px-3 flex flex-col gap-2">
+      <NavbarCharts />
+      <div className="pt-13"></div>
       <div className="flex-1 shadow-sm border p-3 rounded-md bg-white">
         <LineChart data={results.results ?? []} />
       </div>
