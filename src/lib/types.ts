@@ -20,24 +20,24 @@ export type WalletType = {
   category: $Enums.CateWallet;
   createdAt: Date;
   updatedAt: Date;
-  transaction?: TransactionType[] | null;
-  moveTransaction?: TransactionType[] | null;
+  transaction?: TransactionType[];
+  moveTransaction?: TransactionType[];
 };
 
 export type UserType = SessionUser;
 
 export type TransactionType = {
   id: string;
-  category: string;
+  category?: string;
   description?: string | null;
   balance: number;
   type: $Enums.TransType;
-  status: $Enums.StatusTrans;
-  userId: string;
-  walletId: string;
-  fromId: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  status?: $Enums.StatusTrans;
+  userId?: string;
+  walletId?: string;
+  fromId?: string | null;
+  createdAt?: Date;
+  updatedAt?: Date;
   user?: UserType | null;
   wallet?: WalletType | null;
   fromWallet?: WalletType | null;

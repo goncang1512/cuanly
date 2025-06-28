@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,37 +8,34 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(dbgenerated())
-  email         String    @unique
-  name          String?
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  phonenumber   String?
-  avatar        String?
-  avatarId      String?
-  sessions      Session[]
-  accounts      Account[]
-
-  Wallet      Wallet[]
-  Transaction Transaction[]
-
-  Planning        Planning[]
-  username        String?
+  id              String        @id
+  email           String        @unique
+  name            String?
+  emailVerified   Boolean
+  image           String?
+  createdAt       DateTime
+  updatedAt       DateTime
+  phonenumber     String?
+  avatar          String?
+  avatarId        String?
   displayUsername String?
+  username        String?       @unique
+  accounts        Account[]
+  fromLedger      ledger[]      @relation("fromUser")
+  toLedger        ledger[]      @relation("toUser")
   member          Member[]
-  toLedger        ledger[]   @relation("toUser")
-  fromLedger      ledger[]   @relation("fromUser")
+  Planning        Planning[]
+  sessions        Session[]
+  Transaction     Transaction[]
+  Wallet          Wallet[]
 
-  @@unique([username])
   @@map("user")
 }
 
 model Session {
-  id        String   @id @default(dbgenerated())
+  id        String   @id
   expiresAt DateTime
-  token     String
+  token     String   @unique
   createdAt DateTime
   updatedAt DateTime
   ipAddress String?
@@ -52,16 +43,14 @@ model Session {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
   @@map("session")
 }
 
 model Account {
-  id                    String    @id @default(dbgenerated())
+  id                    String    @id
   accountId             String
   providerId            String
   userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?
@@ -71,12 +60,13 @@ model Account {
   password              String?
   createdAt             DateTime
   updatedAt             DateTime
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("account")
 }
 
 model Verification {
-  id         String    @id @default(dbgenerated())
+  id         String    @id
   identifier String
   value      String
   expiresAt  DateTime
@@ -84,6 +74,87 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model Wallet {
+  id              String        @id
+  name            String
+  balance         Float         @default(0)
+  type            TypeWallet    @default(self)
+  userId          String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  kategori        String
+  category        CateWallet    @default(default)
+  member          Member[]
+  moveTransaction Transaction[] @relation("MoveTransaction")
+  transaction     Transaction[]
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("wallet")
+}
+
+model Transaction {
+  id          String      @id
+  category    String
+  description String?
+  balance     Float
+  type        TransType
+  userId      String
+  walletId    String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  fromId      String?
+  status      StatusTrans @default(aktif)
+  fromWallet  Wallet?     @relation("MoveTransaction", fields: [fromId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wallet      Wallet      @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@map("transaction")
+}
+
+model Planning {
+  id             String     @id
+  name           String
+  description    String
+  price          Float
+  deadline       DateTime
+  icon           String
+  userId         String
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  recurrenceType RecurenceT @default(weekly)
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("planning")
+}
+
+model Member {
+  id        String   @id
+  userId    String
+  walletId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wallet    Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@map("member")
+}
+
+model ledger {
+  id        String       @id
+  fromId    String
+  toId      String
+  amount    Int
+  status    StatusLedger @default(unpaid)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  paidMount Int          @default(0)
+  walletId  String
+  from      User         @relation("fromUser", fields: [fromId], references: [id], onDelete: Cascade)
+  to        User         @relation("toUser", fields: [toId], references: [id], onDelete: Cascade)
+
+  @@map("ledger")
 }
 
 enum TypeWallet {
@@ -99,25 +170,6 @@ enum CateWallet {
   asset
 }
 
-model Wallet {
-  id       String     @id
-  name     String
-  balance  Float      @default(0)
-  type     TypeWallet @default(self)
-  userId   String
-  kategori String
-  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  category CateWallet @default(default)
-
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  transaction     Transaction[]
-  moveTransaction Transaction[] @relation(name: "MoveTransaction")
-  member          Member[]
-
-  @@map("wallet")
-}
-
 enum TransType {
   add
   move
@@ -131,28 +183,6 @@ enum StatusTrans {
   delete
 }
 
-model Transaction {
-  id          String      @id @default(dbgenerated())
-  category    String
-  description String?
-  balance     Float
-  type        TransType
-  userId      String
-  walletId    String
-  status      StatusTrans @default(aktif)
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
-
-  fromId     String?
-  fromWallet Wallet? @relation(fields: [fromId], references: [id], onDelete: Cascade, name: "MoveTransaction")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("transaction")
-}
-
 enum RecurenceT {
   monthly
   weekly
@@ -160,53 +190,7 @@ enum RecurenceT {
   onetime
 }
 
-model Planning {
-  id             String     @id @default(dbgenerated())
-  name           String
-  description    String
-  price          Float
-  deadline       DateTime
-  icon           String
-  userId         String
-  recurrenceType RecurenceT @default(weekly)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("planning")
-}
-
-model Member {
-  id        String   @id @default(dbgenerated())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  walletId  String
-  wallet    Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("member")
-}
-
 enum StatusLedger {
   paid
   unpaid
-}
-
-model ledger {
-  id        String       @id @default(dbgenerated())
-  fromId    String
-  walletId  String
-  from      User         @relation("fromUser", fields: [fromId], references: [id], onDelete: Cascade)
-  toId      String
-  to        User         @relation("toUser", fields: [toId], references: [id], onDelete: Cascade)
-  amount    Int
-  paidMount Int          @default(0)
-  status    StatusLedger @default(unpaid)
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-
-  @@map("ledger")
 }

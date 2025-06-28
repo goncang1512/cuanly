@@ -4,6 +4,7 @@ import { AppError } from "@/lib/customHook/AppError";
 import { generateWalletId } from "@/lib/generateId";
 import prisma from "@/lib/prisma";
 import { ApiResponse, WalletType } from "@/lib/types";
+import { countAmount } from "@/lib/utils/count-amount";
 import { $Enums } from "@prisma/client";
 import { generateId } from "better-auth";
 import { endOfDay, endOfMonth, startOfDay, startOfMonth } from "date-fns";
@@ -11,68 +12,107 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
 export const getWallet = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
 
-  const userId = String(session?.user?.id);
-  const now = new Date();
+    const userId = String(session?.user?.id);
+    const now = new Date();
 
-  const wallet = await prisma.wallet.findFirst({
-    where: { userId, name: "Dompet Utama" },
-  });
-
-  const todayTransactions = await prisma.transaction.findMany({
-    where: {
-      userId,
-      status: "aktif",
-      createdAt: {
-        gte: startOfDay(now),
-        lte: endOfDay(now),
+    const wallet = await prisma.wallet.findFirst({
+      where: { userId, name: "Dompet Utama" },
+      include: {
+        transaction: {
+          select: {
+            id: true,
+            type: true,
+            balance: true,
+          },
+        },
       },
-    },
-    orderBy: { createdAt: "desc" },
-    include: {
-      wallet: true,
-      fromWallet: true,
-    },
-  });
+    });
 
-  const monthTransactions = await prisma.transaction.findMany({
-    where: {
-      userId,
-      status: "aktif",
-      createdAt: {
-        gte: startOfMonth(now),
-        lte: endOfMonth(now),
+    const todayTransactions = await prisma.transaction.findMany({
+      where: {
+        userId,
+        status: "aktif",
+        createdAt: {
+          gte: startOfDay(now),
+          lte: endOfDay(now),
+        },
       },
-    },
-    select: {
-      type: true,
-      balance: true,
-    },
-  });
+      orderBy: { createdAt: "desc" },
+      include: {
+        wallet: true,
+        fromWallet: true,
+      },
+    });
 
-  const { income, expand, transfer } = monthTransactions.reduce(
-    (acc, { type, balance }) => {
-      if (type === "add") acc.income += balance;
-      else if (type === "pay" || type === "transfer") acc.expand += balance;
-      else if (type === "move" || type === "adjust") acc.transfer += balance;
-      return acc;
-    },
-    { income: 0, expand: 0, transfer: 0 }
-  );
+    const monthTransactions = await prisma.transaction.findMany({
+      where: {
+        userId,
+        status: "aktif",
+        createdAt: {
+          gte: startOfMonth(now),
+          lte: endOfMonth(now),
+        },
+      },
+      select: {
+        type: true,
+        balance: true,
+      },
+    });
 
-  return {
-    status: true,
-    statusCode: 200,
-    message: "Success get wallet",
-    results: {
-      wallet,
-      transaction: todayTransactions,
-      pieChart: { income, expand, transfer },
-    },
-  };
+    const { income, expand, transfer } = monthTransactions.reduce(
+      (acc, { type, balance }) => {
+        if (type === "add") acc.income += balance;
+        else if (type === "pay" || type === "transfer") acc.expand += balance;
+        else if (type === "move" || type === "adjust") acc.transfer += balance;
+        return acc;
+      },
+      { income: 0, expand: 0, transfer: 0 }
+    );
+
+    if (!wallet) throw new AppError("Wallet not found", 422);
+    const { transaction: newTransaction, ...result } = wallet;
+    const countBalance = countAmount(String(result?.id), newTransaction ?? []);
+
+    return {
+      status: true,
+      statusCode: 200,
+      message: "Success get wallet",
+      results: {
+        wallet: { ...result, balance: countBalance ?? 0 },
+        transaction: todayTransactions,
+        pieChart: { income, expand, transfer },
+      },
+    };
+  } catch (error) {
+    if (error instanceof AppError) {
+      return {
+        status: false,
+        statusCode: error.statusCode,
+        message: error.message,
+        results: {
+          wallet: null,
+          transaction: [],
+          pieChart: { income: 0, expand: 0, transfer: 0 },
+        },
+      };
+    }
+
+    return {
+      status: false,
+      statusCode: 500,
+      message: "Internal Server Error",
+      results: {
+        wallet: null,
+        transaction: [],
+        pieChart: { income: 0, expand: 0, transfer: 0 },
+      },
+    };
+  }
 };
 
 export const createWallet = async (
@@ -144,13 +184,23 @@ export const getWalletPage = async (
         userId: user_id,
       },
       select: {
-        wallet: true,
+        wallet: {
+          include: {
+            transaction: {
+              select: {
+                id: true,
+                type: true,
+                balance: true,
+              },
+            },
+          },
+        },
       },
     });
 
     const groupWallet = memberGroup.flatMap((data) => data.wallet);
 
-    let results: WalletType[] = [];
+    let results = [];
 
     if (typeFilter === "group") {
       results = groupWallet;
@@ -162,6 +212,15 @@ export const getWalletPage = async (
             not: "group",
           },
           ...(typeFilter !== undefined && { type: typeFilter }),
+        },
+        include: {
+          transaction: {
+            select: {
+              balance: true,
+              id: true,
+              type: true,
+            },
+          },
         },
       });
 
@@ -178,14 +237,30 @@ export const getWalletPage = async (
       }
     }
 
+    const updateResult = results.map((data: WalletType) => {
+      const { transaction, ...result } = data;
+      const amount = countAmount(result?.id, transaction ?? []);
+      return {
+        ...result,
+        balance: amount ?? 0,
+      };
+    });
+
     return {
       status: true,
       statusCode: 200,
       message: "Success get my pocket",
-      results: results,
+      results: updateResult,
     };
   } catch (error) {
-    console.error(error);
+    if (error instanceof AppError) {
+      return {
+        status: false,
+        statusCode: error.statusCode,
+        message: error.message,
+        results: [],
+      };
+    }
     return {
       status: false,
       statusCode: 500,
@@ -229,12 +304,14 @@ export const detailWallet = async (wallet_id: string) => {
       },
     });
 
+    const amount = countAmount(String(data?.id), transaction);
+
     return {
       status: true,
       statusCode: 200,
       message: "Success get detail wallet",
       results: {
-        wallet: data,
+        wallet: { ...data, balance: amount ?? 0 } as WalletType,
         transaction,
         countWallet: count,
       },

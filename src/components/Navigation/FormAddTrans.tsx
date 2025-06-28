@@ -178,7 +178,7 @@ export const PickWallet = ({
         className="h-[50vh]"
       >
         <DrawerTitle className="bg-red-500 hidden">Card wallet</DrawerTitle>
-        <ScrollArea className="mx-auto w-full max-w-sm h-screen flex flex-col gap-2 pt-2">
+        <ScrollArea className="mx-auto w-full max-w-sm h-full flex flex-col gap-2 pt-2 pr-3">
           {loadingGet ? (
             <div className="w-full flex justify-center">
               <LoaderCircle className="animate-spin" />

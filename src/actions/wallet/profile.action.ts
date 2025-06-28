@@ -1,6 +1,7 @@
 "use server";
 import { AppError } from "@/lib/customHook/AppError";
 import prisma from "@/lib/prisma";
+import { countAmount } from "@/lib/utils/count-amount";
 
 export const getOneWallet = async (prevState: unknown, formData: FormData) => {
   try {
@@ -13,13 +14,25 @@ export const getOneWallet = async (prevState: unknown, formData: FormData) => {
         name: true,
         id: true,
         balance: true,
+        transaction: {
+          select: {
+            id: true,
+            type: true,
+            balance: true,
+          },
+        },
       },
     });
+
+    if (!data) throw new AppError("Wallet not found", 422);
+    const { transaction, ...result } = data;
+    const amount = countAmount(String(result?.id), transaction ?? []);
+
     return {
       status: true,
       statusCode: 200,
       message: "Success get my wallet",
-      results: data,
+      results: { ...result, balance: amount ?? 0 },
     };
   } catch (error) {
     if (error instanceof AppError) {

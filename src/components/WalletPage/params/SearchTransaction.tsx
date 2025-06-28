@@ -11,7 +11,7 @@ export default function SearchTransaction() {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
-    const search = formData.get("search") as string;
+    const search = (formData.get("search") as string)?.toLowerCase() ?? "";
 
     const data = optimisticTrans?.filter((data) => {
       const desc = data?.description?.toLowerCase() || "";

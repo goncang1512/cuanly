@@ -78,7 +78,7 @@ export default async function WalletDetail({
           </div>
         </div>
 
-        <div className="bg-white min-h-[50vh] md:border md:rounded-md p-3">
+        <div className="bg-white min-h-[50vh] md:border-x md:border-t md:rounded-t-md p-3">
           <SearchTransaction />
           <WalletTransaction />
         </div>

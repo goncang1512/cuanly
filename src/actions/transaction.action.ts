@@ -41,34 +41,6 @@ export const addMoneyWallet = async (
       });
     }
 
-    if (data) {
-      const check = type === "add";
-
-      await prisma.wallet.update({
-        where: {
-          id: data?.fromId ?? data?.walletId,
-        },
-        data: {
-          balance: check
-            ? { increment: data.balance }
-            : { decrement: data.balance },
-        },
-      });
-
-      if (type === "move") {
-        await prisma.wallet.update({
-          where: {
-            id: String(data?.walletId),
-          },
-          data: {
-            balance: {
-              increment: data.balance,
-            },
-          },
-        });
-      }
-    }
-
     const pathname = formData.get("pathname");
     if (pathname) {
       revalidatePath(String(pathname));
@@ -108,31 +80,6 @@ export const deleteTransaction = async (
       },
     });
 
-    const wallet = await prisma.wallet.findFirst({
-      where: {
-        id: data?.walletId,
-      },
-      select: {
-        balance: true,
-      },
-    });
-
-    let newBalance: number = Number(wallet?.balance);
-    if (data.type === "add") {
-      newBalance -= data?.balance;
-    } else if (["pay", "transfer"].includes(data?.type)) {
-      newBalance += data?.balance;
-    }
-
-    await prisma.wallet.update({
-      where: {
-        id: data?.walletId,
-      },
-      data: {
-        balance: newBalance,
-      },
-    });
-
     revalidatePath(`/wallet/${data?.id}`);
     return {
       status: true,
@@ -164,14 +111,18 @@ export const updateTransaction = async (
   formData: FormData
 ) => {
   try {
+    const amount = Number(formData.get("amount"));
+    const transaction_id = String(formData.get("trans_id"));
+    const payMethod = formData.get("paymentmethod") as $Enums.TransType;
+
     const data = await prisma.transaction.update({
       where: {
-        id: formData.get("trans_id") as string,
+        id: transaction_id,
       },
       data: {
         description: formData.get("description") as string,
-        type: formData.get("paymentmethod") as $Enums.TransType,
-        balance: Number(formData.get("amount")),
+        type: payMethod,
+        balance: amount,
         category: formData.get("category") as string,
       },
     });

@@ -87,8 +87,14 @@ export function TopDetail({ wallet }: { wallet: WalletType | null }) {
             ? "Rp ----"
             : `Rp${optimisticValue?.toLocaleString("id-ID") ?? "0"}`}
         </p>
+        <button
+          onClick={() => setSeeSaldo((prev) => !prev)}
+          className="flex items-center gap-2"
+        >
+          {seeSaldo ? <EyeOff size={20} /> : <Eye size={20} />}{" "}
+        </button>
         <Popover>
-          <PopoverTrigger>
+          <PopoverTrigger className="hidden">
             <Ellipsis size={24} />
           </PopoverTrigger>
           <PopoverContent className="w-3xs">
