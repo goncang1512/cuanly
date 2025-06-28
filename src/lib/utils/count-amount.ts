@@ -4,16 +4,25 @@ export const countAmount = (
   walletId: string,
   transaction: TransactionType[]
 ) => {
-  const amount = transaction.reduce((acc, curr) => acc + curr.balance, 0);
+  return transaction.reduce((total, tx) => {
+    if (tx.type === "add") {
+      return total + tx.balance;
+    }
 
-  const totalToSubtract = transaction.reduce((acc, curr) => {
-    const isOut =
-      curr.type === "pay" ||
-      curr.type === "transfer" ||
-      (curr.type === "move" && curr.fromId === walletId);
+    if (tx.type === "pay" || tx.type === "transfer") {
+      return total - tx.balance;
+    }
 
-    return isOut ? acc + curr.balance : acc;
+    if (tx.type === "move") {
+      if (tx.fromId === walletId) {
+        return total - tx.balance;
+      }
+
+      if (tx.fromId !== walletId) {
+        return total + tx.balance;
+      }
+    }
+
+    return total;
   }, 0);
-
-  return amount - totalToSubtract;
 };

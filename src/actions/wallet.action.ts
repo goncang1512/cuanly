@@ -28,6 +28,15 @@ export const getWallet = async () => {
             id: true,
             type: true,
             balance: true,
+            fromId: true,
+          },
+        },
+        moveTransaction: {
+          select: {
+            id: true,
+            type: true,
+            balance: true,
+            fromId: true,
           },
         },
       },
@@ -75,8 +84,12 @@ export const getWallet = async () => {
     );
 
     if (!wallet) throw new AppError("Wallet not found", 422);
-    const { transaction: newTransaction, ...result } = wallet;
-    const countBalance = countAmount(String(result?.id), newTransaction ?? []);
+    const { transaction: newTransaction, moveTransaction, ...result } = wallet;
+    const combinedTransactions = [
+      ...(newTransaction ?? []),
+      ...(moveTransaction ?? []),
+    ];
+    const countBalance = countAmount(String(result?.id), combinedTransactions);
 
     return {
       status: true,
@@ -191,6 +204,15 @@ export const getWalletPage = async (
                 id: true,
                 type: true,
                 balance: true,
+                fromId: true,
+              },
+            },
+            moveTransaction: {
+              select: {
+                balance: true,
+                id: true,
+                type: true,
+                fromId: true,
               },
             },
           },
@@ -219,6 +241,15 @@ export const getWalletPage = async (
               balance: true,
               id: true,
               type: true,
+              fromId: true,
+            },
+          },
+          moveTransaction: {
+            select: {
+              balance: true,
+              id: true,
+              type: true,
+              fromId: true,
             },
           },
         },
@@ -237,12 +268,23 @@ export const getWalletPage = async (
       }
     }
 
-    const updateResult = results.map((data: WalletType) => {
+    const allWallets = results.map((wallet) => {
+      const combined = [...wallet.transaction, ...wallet.moveTransaction];
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { moveTransaction, ...rest } = wallet;
+      return {
+        ...rest,
+        transaction: combined,
+      };
+    });
+
+    const updateResult = allWallets.map((data: WalletType) => {
       const { transaction, ...result } = data;
       const amount = countAmount(result?.id, transaction ?? []);
       return {
         ...result,
         balance: amount ?? 0,
+        transaction,
       };
     });
 
@@ -304,7 +346,7 @@ export const detailWallet = async (wallet_id: string) => {
       },
     });
 
-    const amount = countAmount(String(data?.id), transaction);
+    const amount = countAmount(String(wallet_id), transaction);
 
     return {
       status: true,

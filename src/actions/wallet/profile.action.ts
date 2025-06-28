@@ -19,14 +19,26 @@ export const getOneWallet = async (prevState: unknown, formData: FormData) => {
             id: true,
             type: true,
             balance: true,
+            fromId: true,
+          },
+        },
+        moveTransaction: {
+          select: {
+            id: true,
+            type: true,
+            balance: true,
+            fromId: true,
           },
         },
       },
     });
 
     if (!data) throw new AppError("Wallet not found", 422);
-    const { transaction, ...result } = data;
-    const amount = countAmount(String(result?.id), transaction ?? []);
+    const { transaction, moveTransaction, ...result } = data;
+    const amount = countAmount(String(result?.id), [
+      ...(transaction ?? []),
+      ...(moveTransaction ?? []),
+    ]);
 
     return {
       status: true,
