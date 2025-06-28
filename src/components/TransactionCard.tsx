@@ -46,7 +46,7 @@ export default function TransactionCard({
   }
 
   const { Icon, iconData } = iconFn(
-    newIcon.key !== "" ? newIcon.key : data?.category
+    newIcon.key !== "" ? newIcon.key : String(data?.category)
   );
   const separator =
     data?.type === "add" ? (
@@ -252,7 +252,7 @@ export const TransactionShow = ({
   separator: React.ReactNode;
   colorSeparator: string;
 }) => {
-  const { Icon, iconData } = iconFn(data?.category);
+  const { Icon, iconData } = iconFn(String(data?.category));
   const params = useParams();
 
   return (
@@ -272,7 +272,7 @@ export const TransactionShow = ({
             >
               {data?.description
                 ? data?.description
-                : data?.category.split("-")[1] ?? data.category}
+                : String(data?.category).split("-")[1] ?? data.category}
             </p>
             {["new", "edit"].includes(String(data?.actionType)) && (
               <Timer size={14} />
