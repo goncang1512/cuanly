@@ -2,6 +2,7 @@
 import { AppError } from "@/lib/customHook/AppError";
 import prisma from "@/lib/prisma";
 import { generateId } from "better-auth";
+import { endOfMonth, startOfMonth } from "date-fns";
 import { revalidatePath } from "next/cache";
 
 export const inviteMember = async (prevState: unknown, formData: FormData) => {
@@ -68,8 +69,11 @@ export const inviteMember = async (prevState: unknown, formData: FormData) => {
   }
 };
 
-export const getWalletMember = async (wallet_id: string) => {
+export const getWalletMember = async (wallet_id: string, date: Date) => {
   try {
+    const startDate = startOfMonth(date);
+    const endDate = endOfMonth(date);
+
     const result = await prisma.member.findMany({
       where: {
         walletId: wallet_id,
@@ -82,6 +86,10 @@ export const getWalletMember = async (wallet_id: string) => {
             fromLedger: {
               where: {
                 walletId: wallet_id,
+                createdAt: {
+                  gte: startDate,
+                  lte: endDate,
+                },
               },
               include: {
                 from: {
@@ -142,6 +150,40 @@ export const getWalletMember = async (wallet_id: string) => {
       statusCode: 500,
       message: "Internal Server Error",
       results: null,
+    };
+  }
+};
+
+export const getMontLedger = async (wallet_id: string) => {
+  try {
+    const result = await prisma.$queryRaw<
+      { createdAt: Date }[]
+    >`SELECT DISTINCT ON (DATE_TRUNC('month', "createdAt")) "createdAt"
+      FROM "ledger"
+      WHERE "walletId" = ${wallet_id}
+      ORDER BY DATE_TRUNC('month', "createdAt"), "createdAt" ASC`;
+
+    return {
+      status: true,
+      statusCode: 200,
+      message: "Success get month ledger",
+      results: result,
+    };
+  } catch (error) {
+    if (error instanceof AppError) {
+      return {
+        status: false,
+        statusCode: error.statusCode,
+        message: error.message,
+        results: [],
+      };
+    }
+
+    return {
+      status: false,
+      statusCode: 500,
+      message: "Internal Server Error",
+      results: [],
     };
   }
 };

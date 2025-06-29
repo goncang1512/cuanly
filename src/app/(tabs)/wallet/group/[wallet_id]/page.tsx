@@ -1,4 +1,4 @@
-import { getWalletMember } from "@/actions/member.action";
+import { getMontLedger, getWalletMember } from "@/actions/member.action";
 import {
   Table,
   TableBody,
@@ -7,18 +7,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import MonthChoice from "@/components/WalletPage/group/month-choice";
 import NavbarGroup from "@/components/WalletPage/group/NavbarGroup";
 import PaidComponent from "@/components/WalletPage/group/PaidComponent";
 import TableTransactin from "@/components/WalletPage/group/TableTransactin";
+import { parse } from "date-fns";
 import React from "react";
 
 export default async function WalletGroup({
   params: getParams,
+  searchParams: getSearch,
 }: {
   params: Promise<{ wallet_id: string }>;
+  searchParams?: Promise<{
+    date?: string;
+  }>;
 }) {
   const params = await getParams;
-  const data = await getWalletMember(String(params.wallet_id));
+  const searchParams = await getSearch;
+  const query = searchParams?.date;
+
+  const monthLedger = await getMontLedger(String(params.wallet_id));
+
+  const newDate = query ? parse(query, "yyyy-MM", new Date()) : new Date();
+  const data = await getWalletMember(String(params.wallet_id), newDate);
   const user = data.results?.users;
 
   return (
@@ -113,6 +125,9 @@ export default async function WalletGroup({
         </Table>
 
         <PaidComponent users={user ?? []} />
+
+        <MonthChoice data={monthLedger?.results ?? []} newDate={newDate} />
+
         <TableTransactin data={data.results?.fromLedger ?? []} />
       </div>
     </div>
