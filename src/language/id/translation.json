@@ -1,0 +1,92 @@
+{
+  "home_page": {
+    "planning": "Perencanaan",
+    "create_plan": "Buat rencana pembayaran",
+    "see_all": "Lihat semua",
+    "last_activity": "Aktivitas Terakhir",
+    "history": "Hanya akan menampilkan transaksi dari satu hari yang lalu.",
+    "chart": {
+      "title": "Diagram Lingkaran Transaksi (bulan ini)",
+      "income": "Pemasukan",
+      "expand": "Pengeluaran",
+      "transfer": "Transfer"
+    }
+  },
+  "bottom_bar": {
+    "home": "Beranda",
+    "wallet": "Dompet",
+    "charts": "Grafik",
+    "others": "Lainnya"
+  },
+  "wallet_page": {
+    "title": "Dompet",
+    "tabs": {
+      "all": "Semua",
+      "self": "Dompet saya",
+      "group": "Dompet bersama"
+    },
+    "assets": "Aset saya",
+    "all_asset": "Semua aset",
+    "group_assets": "Aset kita",
+    "make_wallet": "Buat dompet",
+    "create_wallet": {
+      "name": "Nama",
+      "category": "Kategori",
+      "icon": "Ikon",
+      "type": "Tipe",
+      "create": "Buat"
+    }
+  },
+  "wallet_detail": {
+    "back": "Detail dompet",
+    "add": "Tambah uang",
+    "move": "Pindahkan uang",
+    "transfer": "Transfer & Bayar",
+    "search": "Cari transaksi",
+    "delete": "Hapus dompet",
+    "edit": "Edit dompet",
+    "create_transaction": {
+      "description": "Deskripsi",
+      "amount": "Jumlah",
+      "category": "Kategori",
+      "method": "Metode"
+    }
+  },
+  "charts_page": {
+    "title": "Statistik Keuangan",
+    "month": "Bulan",
+    "year": "Tahun"
+  },
+  "profile_page": {
+    "title": "Lainnya",
+    "profile": "Profil saya"
+  },
+  "group_wallet": {
+    "title": "Grup",
+    "add_transaction": "Tambah Transaksi",
+    "piutang": "Piutang",
+    "utang": "Utang",
+    "choose_member": "Pilih anggota",
+    "amount": "Jumlah",
+    "send": "Kirim",
+    "status": "Status",
+    "month": "Juni 2025",
+    "no": "No.",
+    "debtor": "Piutang",
+    "creditor": "Utang",
+    "transaction_form_title": "Tambah Transaksi",
+    "placeholder_amount": "Rp -",
+    "placeholder_choose": "Pilih anggota",
+    "paid": {
+      "paid_utang_title": "Bayar utang",
+      "utang": "Utang",
+      "amount_due": "Jumlah yang harus dibayar",
+      "paid": "Dibayar",
+      "amount": "Jumlah",
+      "placeholder_amount": "Rp -",
+      "button_paid": "Bayar",
+      "delete": "Delete",
+      "cancel": "Batalkan"
+    }
+  }
+}

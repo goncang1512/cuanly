@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from "@/language/useLanguage";
 import { useFormActionState } from "@/lib/customHook/useFormActionState";
 import { iconFn, icons } from "@/lib/dynamicIcon";
 import { WalletType } from "@/lib/types";
@@ -31,6 +32,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 export default function BarTop({ wallet }: { wallet?: WalletType | null }) {
   const router = useRouter();
   const [dialog, setDialog] = useState(false);
+  const { lang } = useTranslation();
 
   return (
     <div className="bg-neutral-50 fixed z-50 top-0 left-0 w-full h-14 py-2 px-3 flex items-center justify-center">
@@ -39,7 +41,7 @@ export default function BarTop({ wallet }: { wallet?: WalletType | null }) {
           <button onClick={() => router.back()}>
             <ArrowLeft />
           </button>
-          <h1 className="text-sm font-medium">Wallet details</h1>
+          <h1 className="text-sm font-medium">{lang.wallet_detail.back}</h1>
         </div>
         <Drawer>
           <DrawerTrigger
@@ -53,11 +55,11 @@ export default function BarTop({ wallet }: { wallet?: WalletType | null }) {
               {wallet?.name !== "Dompet Utama" && (
                 <>
                   <button className="px-2 py-3 hover:bg-neutral-200 w-full text-start">
-                    Delete wallet
+                    {lang.wallet_detail.delete}
                   </button>
                   <Dialog open={dialog} onOpenChange={setDialog}>
                     <DialogTrigger className="px-2 py-3 hover:bg-neutral-200 w-full text-start">
-                      Edit Wallet
+                      {lang.wallet_detail.edit}
                     </DialogTrigger>
                     <UpdateWallet wallet={wallet} setDialog={setDialog} />
                   </Dialog>
@@ -79,6 +81,7 @@ const UpdateWallet = ({
   setDialog: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [message, setMessage] = useState("");
+  const { lang } = useTranslation();
   const { formAction, formValue, setFormValue, isPending, state } =
     useFormActionState(updateWallet, {
       name: "",
@@ -109,7 +112,7 @@ const UpdateWallet = ({
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Edit wallet</DialogTitle>
+        <DialogTitle>{lang.wallet_detail.edit}</DialogTitle>
         <DialogDescription className="text-sm text-red-500">
           {message}
         </DialogDescription>
@@ -122,7 +125,7 @@ const UpdateWallet = ({
         className="flex flex-col gap-3"
       >
         <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="name">Name</Label>
+          <Label htmlFor="name">{lang.wallet_page.create_wallet.name}</Label>
           <Input
             value={formValue.name}
             onChange={(e) =>
@@ -136,7 +139,9 @@ const UpdateWallet = ({
           />
         </div>
         <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="category">Category</Label>
+          <Label htmlFor="category">
+            {lang.wallet_page.create_wallet.category}
+          </Label>
           <Select
             required
             name="category"
@@ -160,7 +165,7 @@ const UpdateWallet = ({
           </Select>
         </div>
         <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="icon">Icon</Label>
+          <Label htmlFor="icon">{lang.wallet_page.create_wallet.icon}</Label>
           <Select
             required
             name="newicon"
@@ -189,7 +194,7 @@ const UpdateWallet = ({
           </Select>
         </div>
         <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="type">Jenis</Label>
+          <Label htmlFor="type">{lang.wallet_page.create_wallet.type}</Label>
           <Select
             value={formValue.type}
             onValueChange={(e) =>

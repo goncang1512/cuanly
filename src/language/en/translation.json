@@ -1,0 +1,92 @@
+{
+  "home_page": {
+    "planning": "Planning",
+    "create_plan": "Create a payment plan",
+    "see_all": "See all",
+    "last_activity": "Last Activity",
+    "history": "Will only display transactions from one day ago.",
+    "chart": {
+      "title": "Transaction Pie Chart (this month)",
+      "income": "Income",
+      "expand": "Expand",
+      "transfer": "Transfer"
+    }
+  },
+  "bottom_bar": {
+    "home": "Home",
+    "wallet": "Wallet",
+    "charts": "Charts",
+    "others": "Others"
+  },
+  "wallet_page": {
+    "title": "Wallet",
+    "tabs": {
+      "all": "All",
+      "self": "My wallet",
+      "group": "Shared wallet"
+    },
+    "assets": "My assets",
+    "all_asset": "All assets",
+    "group_assets": "Our assets",
+    "make_wallet": "Make a wallet",
+    "create_wallet": {
+      "name": "Name",
+      "category": "Category",
+      "icon": "Icon",
+      "type": "Type",
+      "create": "Create"
+    }
+  },
+  "wallet_detail": {
+    "back": "Wallet details",
+    "add": "Add money",
+    "move": "Move money",
+    "transfer": "Transfer & Pay",
+    "search": "Search transactions",
+    "delete": "Delete wallet",
+    "edit": "Edit wallet",
+    "create_transaction": {
+      "description": "Description",
+      "amount": "Amount",
+      "category": "Category",
+      "method": "Method"
+    }
+  },
+  "charts_page": {
+    "title": "Financial Statistics",
+    "month": "Month",
+    "year": "Year"
+  },
+  "profile_page": {
+    "title": "Others",
+    "profile": "My profile"
+  },
+  "group_wallet": {
+    "title": "Group",
+    "add_transaction": "Add Transaction",
+    "piutang": "Receivable",
+    "utang": "Payable",
+    "choose_member": "Choose member",
+    "amount": "Amount",
+    "send": "Send",
+    "status": "Status",
+    "month": "June 2025",
+    "no": "No.",
+    "debtor": "Receivable",
+    "creditor": "Payable",
+    "transaction_form_title": "Add Transaction",
+    "placeholder_amount": "Rp -",
+    "placeholder_choose": "Choose member",
+    "paid": {
+      "paid_utang_title": "Paid utang",
+      "utang": "Payable",
+      "amount_due": "Amount due",
+      "paid": "Paid",
+      "amount": "Amount",
+      "placeholder_amount": "Rp -",
+      "button_paid": "Paid",
+      "delete": "Delete",
+      "cancel": "Cancel"
+    }
+  }
+}

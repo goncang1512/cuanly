@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { LanguageProvider } from "@/language/useLanguage";
 
 export const metadata: Metadata = {
   title: "CuanLy",
@@ -17,7 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-inter antialiased bg-neutral-50`}>
         <NextTopLoader color="#3cbf8f" height={2} showSpinner={false} />
-        {children}
+        <LanguageProvider>{children}</LanguageProvider>
         <Toaster className="bg-red-400" />
       </body>
     </html>

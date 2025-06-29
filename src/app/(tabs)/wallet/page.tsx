@@ -1,12 +1,8 @@
 import { getWalletPage } from "@/actions/wallet.action";
-import { Card } from "@/components/ui/card";
-import { DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsList } from "@/components/ui/tabs";
 import AssetShow from "@/components/WalletPage/AssetShow";
 import CardWallet from "@/components/WalletPage/CardWallet";
-import FormCreateWallet, {
-  FormWalletContext,
-} from "@/components/WalletPage/FormCreateWallet";
+import CreateWallet from "@/components/WalletPage/create-wallet";
 import NavbarWallet from "@/components/WalletPage/navbar-wallet";
 import TabsWallet from "@/components/WalletPage/TabsWallet";
 import { auth } from "@/lib/auth";
@@ -50,19 +46,7 @@ async function WalletPage(props: {
         {(allWallet?.results as WalletType[]).map((data: WalletType) => {
           return <CardWallet key={data?.id} wallet={data} />;
         })}
-        <FormWalletContext>
-          <DialogTrigger>
-            <Card className="flex h-32 items-center gap-2 justify-center bg-light-emerald border-0">
-              <span className="bg-emerald rounded-full size-12 flex items-center justify-center text-neutral-700">
-                <Plus size={30} />
-              </span>
-              <p className="font-medium">Make a wallet</p>
-            </Card>
-          </DialogTrigger>
-          <DialogContent>
-            <FormCreateWallet />
-          </DialogContent>
-        </FormWalletContext>
+        <CreateWallet />
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import { DrawerTrigger } from "@/components/ui/drawer";
 import WalletContextProvider from "@/lib/context/WalletContext";
 import WalletTransaction from "@/components/WalletPage/params/WalletTransaction";
 import SearchTransaction from "@/components/WalletPage/params/SearchTransaction";
+import { getTransaltion } from "@/language/getTranslation";
 
 export default async function WalletDetail({
   params,
@@ -18,6 +19,10 @@ export default async function WalletDetail({
   const wallet = await detailWallet(wallet_id);
   const walletNew = wallet?.results?.wallet;
   const countWallet = wallet?.results?.countWallet;
+
+  const lang = await getTransaltion();
+
+  console.log(lang);
 
   return (
     <WalletContextProvider
@@ -36,7 +41,7 @@ export default async function WalletDetail({
               </DrawerTrigger>
             </FormAddMoney>
 
-            <h1 className="text-sm font-medium">Add money</h1>
+            <h1 className="text-sm font-medium">{lang.wallet_detail.add}</h1>
           </div>
           <div className="flex flex-col items-center w-max">
             <FormAddMoney typeTransaction="move" wallet={walletNew ?? null}>
@@ -55,7 +60,7 @@ export default async function WalletDetail({
                 <ArrowUp size={30} />
               </DrawerTrigger>
             </FormAddMoney>
-            <h1 className="text-sm font-medium">Move money</h1>
+            <h1 className="text-sm font-medium">{lang.wallet_detail.move}</h1>
           </div>
           <div className="flex flex-col items-center w-max">
             <FormAddMoney typeTransaction="pay" wallet={walletNew ?? null}>
@@ -74,7 +79,9 @@ export default async function WalletDetail({
                 <ArrowRight size={30} />
               </DrawerTrigger>
             </FormAddMoney>
-            <h1 className="text-sm font-medium">Transfer & Pay</h1>
+            <h1 className="text-sm font-medium">
+              {lang.wallet_detail.transfer}
+            </h1>
           </div>
         </div>
 

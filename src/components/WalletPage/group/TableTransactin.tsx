@@ -23,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useTranslation } from "@/language/useLanguage";
 import { authClient } from "@/lib/auth-client";
 import { useFormActionState } from "@/lib/customHook/useFormActionState";
 import { TLedger } from "@/lib/types";
@@ -31,14 +32,15 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 export default function TableTransactin({ data }: { data: TLedger[] }) {
+  const { lang } = useTranslation();
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>No.</TableHead>
-          <TableHead>Piutang</TableHead>
-          <TableHead>Utang</TableHead>
-          <TableHead>Amount</TableHead>
+          <TableHead>{lang.group_wallet.piutang}</TableHead>
+          <TableHead>{lang.group_wallet.utang}</TableHead>
+          <TableHead>{lang.group_wallet.amount}</TableHead>
           <TableHead>Status</TableHead>
           <TableHead></TableHead>
         </TableRow>
@@ -78,6 +80,7 @@ const formLedger = {
 
 const DialogPaid = ({ item }: { item: TLedger }) => {
   const params = useParams();
+  const { lang } = useTranslation();
   const session = authClient.useSession();
   const [errMsg, setErrMsg] = useState("");
   const [onDialog, setOnDialog] = useState(false);
@@ -111,18 +114,22 @@ const DialogPaid = ({ item }: { item: TLedger }) => {
         <BanknoteArrowDown />
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Paid utang</DialogTitle>
+        <DialogTitle>{lang.group_wallet.paid.paid_utang_title}</DialogTitle>
         <DialogDescription className="text-center text-red-500">
           {errMsg}
         </DialogDescription>
         <div className="flex items-start gap-3">
           <div>
             <div className="flex items-center text-base gap-2">
-              <Label className="text-base">Utang :</Label>
+              <Label className="text-base">
+                {lang.group_wallet.paid.utang} :
+              </Label>
               <p>Rp {item.amount.toLocaleString("id-ID")}</p>
             </div>
             <div className="flex items-center text-base gap-2">
-              <Label className="text-base">Paid :</Label>
+              <Label className="text-base">
+                {lang.group_wallet.paid.paid} :
+              </Label>
               <p>
                 Rp{" "}
                 {item.paidMount > 0
@@ -132,7 +139,9 @@ const DialogPaid = ({ item }: { item: TLedger }) => {
             </div>
           </div>
           <div className="flex items-center text-base gap-2">
-            <Label className="text-base">Amount due :</Label>
+            <Label className="text-base">
+              {lang.group_wallet.paid.amount_due} :
+            </Label>
             <p>Rp {(item.amount - item.paidMount).toLocaleString("id-ID")}</p>
           </div>
         </div>
@@ -150,7 +159,7 @@ const DialogPaid = ({ item }: { item: TLedger }) => {
               }}
             >
               <div className="grid gap-2">
-                <Label>Amount</Label>
+                <Label>{lang.group_wallet.paid.amount}</Label>
                 <div className="relative w-full">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
                     Rp
@@ -165,7 +174,11 @@ const DialogPaid = ({ item }: { item: TLedger }) => {
               </div>
 
               <Button disabled={isPending} type="submit">
-                {isPending ? <Loader2 className="animate-spin" /> : "Paid"}
+                {isPending ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  lang.group_wallet.paid.paid
+                )}
               </Button>
             </form>
           )}
@@ -199,6 +212,7 @@ const CanceldButton = ({
   setOnDialog: React.Dispatch<React.SetStateAction<boolean>>;
   setErrMsg: React.Dispatch<React.SetStateAction<string>>;
 }) => {
+  const { lang } = useTranslation();
   const { formAction, isPending, state } = useFormActionState(
     canceledLedger,
     null
@@ -223,7 +237,11 @@ const CanceldButton = ({
       }}
     >
       <Button className="bg-red-500 hover:bg-red-400 w-content">
-        {isPending ? <Loader2 className="animate-spin" /> : "Canceled"}
+        {isPending ? (
+          <Loader2 className="animate-spin" />
+        ) : (
+          lang.group_wallet.paid.cancel
+        )}
       </Button>
     </form>
   );
@@ -238,6 +256,7 @@ const DeleteButton = ({
   setOnDialog: React.Dispatch<React.SetStateAction<boolean>>;
   setErrMsg: React.Dispatch<React.SetStateAction<string>>;
 }) => {
+  const { lang } = useTranslation();
   const { formAction, isPending, state } = useFormActionState(
     deleteLedger,
     null
@@ -261,7 +280,11 @@ const DeleteButton = ({
       }}
     >
       <Button className="bg-red-500 hover:bg-red-400 w-content">
-        {isPending ? <Loader2 className="animate-spin" /> : "Deleted"}
+        {isPending ? (
+          <Loader2 className="animate-spin" />
+        ) : (
+          lang.group_wallet.paid.delete
+        )}
       </Button>
     </form>
   );

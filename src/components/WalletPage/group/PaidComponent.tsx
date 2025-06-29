@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTranslation } from "@/language/useLanguage";
 import { authClient } from "@/lib/auth-client";
 import { useFormActionState } from "@/lib/customHook/useFormActionState";
 import { Loader2, X } from "lucide-react";
@@ -37,6 +38,7 @@ const formLedger = {
 
 export default function PaidComponent({ users }: { users: UserProps[] }) {
   const params = useParams();
+  const { lang } = useTranslation();
   const [piutang, setPiutang] = useState("");
   const [arrayPiutang, setArrayPiutang] = useState<
     { id: string; name: string | null }[]
@@ -142,11 +144,11 @@ export default function PaidComponent({ users }: { users: UserProps[] }) {
             classIcon="hidden"
             className="h-content whitespace-nowrap w-content hover:no-underline flex-0 bg-green-400 px-3 py-1"
           >
-            Add Transaction
+            {lang.group_wallet.add_transaction}
           </AccordionTrigger>
           <AccordionContent className="">
             <h1 className="text-center font-medium text-base pb-3">
-              Add Transaction
+              {lang.group_wallet.add_transaction}
             </h1>
 
             <Tabs
@@ -167,13 +169,13 @@ export default function PaidComponent({ users }: { users: UserProps[] }) {
                   value="piutang"
                   className="data-[state=active]:bg-emerald hover:bg-emerald-500 duration-200"
                 >
-                  Piutang
+                  {lang.group_wallet.piutang}
                 </TabsTrigger>
                 <TabsTrigger
                   value="utang"
                   className="data-[state=active]:bg-emerald hover:bg-emerald-500 duration-200"
                 >
-                  Utang
+                  {lang.group_wallet.utang}
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -181,7 +183,7 @@ export default function PaidComponent({ users }: { users: UserProps[] }) {
             <form action={handleCreateLedger} className="grid gap-2">
               <div className="flex gap-2 pt-5">
                 <div className="grid gap-2 w-full">
-                  <Label>Piutang</Label>
+                  <Label>{lang.group_wallet.piutang}</Label>
                   <div className="flex gap-2 items-center">
                     <Select
                       disabled={tabs === "piutang"}
@@ -189,7 +191,9 @@ export default function PaidComponent({ users }: { users: UserProps[] }) {
                       onValueChange={handleChangePiutang}
                     >
                       <SelectTrigger className="w-full disabled:opacity-100">
-                        <SelectValue placeholder="Choose member" />
+                        <SelectValue
+                          placeholder={lang.group_wallet.choose_member}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {users.map((data) => {
@@ -228,7 +232,7 @@ export default function PaidComponent({ users }: { users: UserProps[] }) {
                 </div>
 
                 <div className="grid gap-2 w-full">
-                  <Label>Utang</Label>
+                  <Label>{lang.group_wallet.utang}</Label>
                   <div className="flex items-center gap-2">
                     <Select
                       disabled={tabs === "utang"}
@@ -236,7 +240,9 @@ export default function PaidComponent({ users }: { users: UserProps[] }) {
                       onValueChange={handleChangeUtang}
                     >
                       <SelectTrigger className="w-full disabled:opacity-100">
-                        <SelectValue placeholder="Choose member" />
+                        <SelectValue
+                          placeholder={lang.group_wallet.choose_member}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {users.map((data) => (
@@ -275,7 +281,7 @@ export default function PaidComponent({ users }: { users: UserProps[] }) {
 
               <div>
                 <div className="grid gap-2">
-                  <Label>Amount</Label>
+                  <Label>{lang.group_wallet.amount}</Label>
                   <div className="relative w-full">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
                       Rp

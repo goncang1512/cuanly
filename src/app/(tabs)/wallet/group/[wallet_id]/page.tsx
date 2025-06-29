@@ -11,6 +11,7 @@ import MonthChoice from "@/components/WalletPage/group/month-choice";
 import NavbarGroup from "@/components/WalletPage/group/NavbarGroup";
 import PaidComponent from "@/components/WalletPage/group/PaidComponent";
 import TableTransactin from "@/components/WalletPage/group/TableTransactin";
+import { getTransaltion } from "@/language/getTranslation";
 import { parse } from "date-fns";
 import React from "react";
 
@@ -26,6 +27,7 @@ export default async function WalletGroup({
   const params = await getParams;
   const searchParams = await getSearch;
   const query = searchParams?.date;
+  const lang = await getTransaltion();
 
   const monthLedger = await getMontLedger(String(params.wallet_id));
 
@@ -76,9 +78,11 @@ export default async function WalletGroup({
                   {/* Label teks */}
                   <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-between text-[12px] leading-none p-[4px] z-20 pointer-events-none">
                     <p className="self-end text-green-900 font-medium">
-                      Piutang
+                      {lang.group_wallet.piutang}
                     </p>
-                    <p className="self-start text-red-900 font-medium">Utang</p>
+                    <p className="self-start text-red-900 font-medium">
+                      {lang.group_wallet.utang}
+                    </p>
                   </div>
                 </div>
               </TableHead>

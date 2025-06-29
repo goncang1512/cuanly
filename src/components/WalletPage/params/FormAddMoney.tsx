@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useTranslation } from "@/language/useLanguage";
 
 export type FormTypeTrans = {
   displayValue: string;
@@ -49,6 +50,7 @@ export default function FormAddMoney({
   typeTransaction: $Enums.TransType;
 }) {
   const [seeDrawer, setSeeDrawer] = useState(false);
+  const { lang } = useTranslation();
   const [walletPick, setWalletPick] = useState<WalletType | null | undefined>();
   const { handleAction } = useContext(WalletContext);
   const { state, formValue, setFormValue, isPending, formAction } =
@@ -81,10 +83,14 @@ export default function FormAddMoney({
             <TabsList className="w-full">
               <TabsTrigger value="formData">Form</TabsTrigger>
               {typeTransaction !== "move" && (
-                <TabsTrigger value="category">Category</TabsTrigger>
+                <TabsTrigger value="category">
+                  {lang.wallet_detail.create_transaction.category}
+                </TabsTrigger>
               )}
               {typeTransaction === "move" && (
-                <TabsTrigger value="card-kredit">Wallet</TabsTrigger>
+                <TabsTrigger value="card-kredit">
+                  {lang.wallet_page.title}
+                </TabsTrigger>
               )}
             </TabsList>
             <TabsContent value="formData">
@@ -104,7 +110,9 @@ export default function FormAddMoney({
                 className="w-full mt-2 flex flex-col gap-3"
               >
                 <div className="grid w-full items-center gap-1.5">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description">
+                    {lang.wallet_detail.create_transaction.description}
+                  </Label>
                   <Input
                     value={formValue.description}
                     onChange={(e) =>
@@ -120,7 +128,9 @@ export default function FormAddMoney({
                   />
                 </div>
                 <div className="grid w-full items-center gap-1.5">
-                  <Label htmlFor="balance">Amount</Label>
+                  <Label htmlFor="balance">
+                    {lang.wallet_detail.create_transaction.amount}
+                  </Label>
                   <div className="relative flex-1">
                     <Input
                       value={formValue.displayValue}
@@ -140,7 +150,9 @@ export default function FormAddMoney({
                 </div>
                 {typeTransaction === "pay" && (
                   <div className="grid w-full items-center gap-1.5">
-                    <Label htmlFor="description">Method</Label>
+                    <Label htmlFor="description">
+                      {lang.wallet_detail.create_transaction.method}
+                    </Label>
                     <Select
                       value={formValue.method}
                       onValueChange={(val) =>

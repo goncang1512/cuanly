@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { LabelType } from "./LineChart";
+import { useTranslation } from "@/language/useLanguage";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -16,6 +17,7 @@ export default function PieChart({
   showButton?: boolean;
 }) {
   const [mode, setMode] = useState<"month" | "year">(type);
+  const { lang } = useTranslation();
 
   // Ambil bulan dan tahun dari bulan terakhir
   const lastDate = new Date();
@@ -53,7 +55,7 @@ export default function PieChart({
             }`}
             onClick={() => setMode("month")}
           >
-            Month
+            {lang.charts_page.month}
           </button>
           <button
             className={`px-4 py-1 rounded ${
@@ -61,7 +63,7 @@ export default function PieChart({
             }`}
             onClick={() => setMode("year")}
           >
-            Year
+            {lang.charts_page.year}
           </button>
         </div>
       )}
@@ -112,6 +114,7 @@ export default function PieChart({
 
 export function PieChartMonth({ data }: { data: LabelType }) {
   const totalAll = data.income + data.expand + data.transfer;
+  const { lang } = useTranslation();
 
   const percent = (value: number) =>
     totalAll === 0 ? 0 : ((value / totalAll) * 100).toFixed(1);
@@ -120,7 +123,11 @@ export function PieChartMonth({ data }: { data: LabelType }) {
     <div className="w-full max-w-md mx-auto">
       <Pie
         data={{
-          labels: ["Income", "Expand", "Transfer"],
+          labels: [
+            lang.home_page.chart.income,
+            lang.home_page.chart.expand,
+            lang.home_page.chart.transfer,
+          ],
           datasets: [
             {
               label: "Financial Flow (%)",
@@ -142,7 +149,7 @@ export function PieChartMonth({ data }: { data: LabelType }) {
             },
             title: {
               display: true,
-              text: "Transaction Pie Chart (this month)",
+              text: lang.home_page.chart.title,
             },
             tooltip: {
               callbacks: {

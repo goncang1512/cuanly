@@ -5,9 +5,11 @@ import DrawerAdd from "./Navigation/DrawerAdd";
 import { usePathname } from "next/navigation";
 import NavContextProvider from "@/lib/context/NavContext";
 import { Ellipsis } from "lucide-react";
+import { useTranslation } from "@/language/useLanguage";
 // BOTTOM NAVBAR
 function BottomNav() {
   const pathname = usePathname();
+  const { lang } = useTranslation();
   return (
     <NavContextProvider>
       <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
@@ -26,7 +28,7 @@ function BottomNav() {
               </svg>
             }
           >
-            Home
+            {lang.bottom_bar.home}
           </LinkNav>
           <LinkNav
             inHref={pathname === "/wallet"}
@@ -43,7 +45,7 @@ function BottomNav() {
             }
             href="/wallet?type=self"
           >
-            Wallet
+            {lang.bottom_bar.wallet}
           </LinkNav>
           <CircleAdd>
             <DrawerAdd />
@@ -65,14 +67,14 @@ function BottomNav() {
             }
             href="/charts"
           >
-            Charts
+            {lang.bottom_bar.charts}
           </LinkNav>
           <LinkNav
             inHref={pathname === "/others"}
             icon={<Ellipsis size={28} />}
             href="/others"
           >
-            Others
+            {lang.bottom_bar.others}
           </LinkNav>
         </div>
       </div>
